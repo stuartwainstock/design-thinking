@@ -15,8 +15,9 @@ export default function ChatPage() {
           Knowledge chat
         </h1>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Answers are generated from published Sanity entries (frameworks, processes, insights, and
-          more). They are not arbitrary database queries—context is refreshed on each message.
+          Answers use your published Sanity entries (frameworks, processes, insights, and more) as
+          context for Claude. Context is refreshed on each message; the assistant does not run
+          arbitrary database queries.
         </p>
       </header>
       <ChatPanel requiresAccessToken={requiresAccessToken} />

@@ -17,6 +17,20 @@ Now you can do the following things:
 
 **Note:** The document type for annotated links is `externalResource` (studio title still “Reference”) because `reference` is reserved in Sanity.
 
+### Host the Studio on Sanity (production dataset)
+
+From the repo root, with your Sanity account logged in (`npx sanity login` if needed):
+
+```bash
+npm run deploy
+```
+
+The CLI builds the Studio and uploads it to **Sanity hosting**. The first run asks you to choose a **hostname** (e.g. `your-name` → `https://your-name.sanity.studio`). Later deploys update the same host. Your `sanity.config.ts` already targets project **`eff153ps`** and dataset **`production`**, so the hosted Studio edits the same dataset you use locally.
+
+Optional: `npx sanity deploy --schema-required` so deploy fails if the schema cannot be stored. Add **`appId`** under `deployment` in `sanity.cli.ts` from [Manage → Studios](https://www.sanity.io/manage/project/eff153ps/studios) if you want pinned auto-updates instead of the generic warning.
+
+If the **Next.js site** (or another origin) calls the Sanity API from the browser, add that site URL under **API → CORS origins** for project `eff153ps` in [Sanity Manage](https://www.sanity.io/manage).
+
 ## Supabase
 
 1. Create a project at [supabase.com/dashboard](https://supabase.com/dashboard).

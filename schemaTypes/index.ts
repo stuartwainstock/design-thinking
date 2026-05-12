@@ -1,5 +1,6 @@
 import { phaseDocument } from './documents/phase'
 import { tagDocument } from './documents/tag'
+import { sourceAuthorDocument } from './documents/sourceAuthor'
 import { frameworkDocument } from './documents/framework'
 import { processDocument } from './documents/process'
 import { insightDocument } from './documents/insight'
@@ -11,6 +12,7 @@ export const schemaTypes = [
   // Taxonomy (define first — referenced by document types)
   phaseDocument,
   tagDocument,
+  sourceAuthorDocument,
 
   // Inline objects
   stepObject,

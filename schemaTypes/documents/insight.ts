@@ -68,8 +68,13 @@ export const insightDocument = defineType({
     defineField({
       name: 'sourceAuthor',
       title: 'Source author',
-      type: 'string',
+      type: 'reference',
       group: 'content',
+      to: [{type: 'sourceAuthor'}],
+      options: {
+        disableNew: false,
+      },
+      description: 'Pick an existing author or create one — reuse across insights.',
     }),
     defineField({
       name: 'sourceTitle',
@@ -87,10 +92,10 @@ export const insightDocument = defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'sourceAuthor',
+      authorName: 'sourceAuthor.name',
       confidence: 'confidence',
     },
-    prepare({ title, subtitle, confidence }) {
+    prepare({ title, authorName, confidence }) {
       const icons: Record<string, string> = {
         evergreen: '🌲',
         evolving: '🌱',
@@ -99,7 +104,7 @@ export const insightDocument = defineType({
       }
       return {
         title: `${icons[confidence] ?? ''} ${title}`,
-        subtitle: subtitle ? `via ${subtitle}` : undefined,
+        subtitle: authorName ? `via ${authorName}` : undefined,
       }
     },
   },

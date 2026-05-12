@@ -12,7 +12,7 @@ Now you can do the following things:
 
 - **Project:** `eff153ps` · **Dataset:** `production`
 - **Dev:** `npm run dev` (Studio at [http://localhost:3333](http://localhost:3333) by default)
-- **Schema:** `schemaTypes/` — design-knowledge types (phase, tag, framework, process, insight, principle, external resource). After schema edits run `npx sanity schema deploy`.
+- **Schema:** `schemaTypes/` — design-knowledge types (phase, tag, **source author**, framework, process, insight, principle, external resource). After schema edits run `npx sanity schema deploy`.
 - **Seed data (optional):** `scripts/seed-data.ts` — example payloads; convert to NDJSON or import via the API when you are ready.
 
 **Note:** The document type for annotated links is `externalResource` (studio title still “Reference”) because `reference` is reserved in Sanity.
@@ -25,3 +25,15 @@ Now you can do the following things:
 4. **Supabase MCP:** see the [MCP setup guide](https://supabase.com/docs/guides/getting-started/mcp); authenticate in Cursor so tools can reach your project.
 
 Optional: install the [Supabase CLI](https://supabase.com/docs/guides/cli) and run `supabase init` in this repo when you want local migrations and `supabase link`.
+
+## Web app (`web/`)
+
+Next.js marketing shell plus **Knowledge chat** (`/chat`): fetches a bounded slice of published Sanity documents on each request and answers with OpenAI using that context only (no user-written GROQ).
+
+1. `cd web && cp .env.example .env.local`
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `OPENAI_API_KEY`. Optional: `SANITY_API_READ_TOKEN` for draft/private reads; `CHAT_ACCESS_TOKEN` plus the same value in the chat UI (once) to gate the API.
+3. `npm run dev` from `web/` → [http://localhost:3000](http://localhost:3000)
+
+Run Studio from repo root (`npm run dev`) on port **3333**; run the site from `web/` on **3000**.
+
+**Schema note:** Insights and references now use a **Source author** document reference. If you had old plain-text author fields, copy those names into new **Source author** entries and pick them on each document.

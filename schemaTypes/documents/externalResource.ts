@@ -61,8 +61,10 @@ export const externalResourceDocument = defineType({
     defineField({
       name: 'author',
       title: 'Author',
-      type: 'string',
+      type: 'reference',
       group: 'content',
+      to: [{type: 'sourceAuthor'}],
+      description: 'Same reusable authors as insights — create once, link everywhere.',
     }),
     defineField({
       name: 'whyItMatters',
@@ -98,10 +100,10 @@ export const externalResourceDocument = defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'author',
+      authorName: 'author.name',
       resourceType: 'resourceType',
     },
-    prepare({ title, subtitle, resourceType }) {
+    prepare({ title, authorName, resourceType }) {
       const typeIcons: Record<string, string> = {
         article: '📄',
         book: '📚',
@@ -112,7 +114,7 @@ export const externalResourceDocument = defineType({
       }
       return {
         title: `${typeIcons[resourceType] ?? '🔗'} ${title}`,
-        subtitle,
+        subtitle: authorName ?? undefined,
       }
     },
   },

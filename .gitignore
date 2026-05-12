@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build / caches
+.next/
+out/
+dist/
+.turbo/
+.sanity/
+*.tsbuildinfo
+
+# Env (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vercel / deploy
+.vercel/
+
+# Supabase local (if used later)
+.branches/
+.temp/

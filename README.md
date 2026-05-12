@@ -28,10 +28,10 @@ Optional: install the [Supabase CLI](https://supabase.com/docs/guides/cli) and r
 
 ## Web app (`web/`)
 
-Next.js marketing shell plus **Knowledge chat** (`/chat`): fetches a bounded slice of published Sanity documents on each request and answers with OpenAI using that context only (no user-written GROQ).
+Next.js marketing shell plus **Knowledge chat** (`/chat`): fetches a bounded slice of published Sanity documents on each request and answers with **Anthropic Claude** using that context only (no user-written GROQ).
 
 1. `cd web && cp .env.example .env.local`
-2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `OPENAI_API_KEY`. Optional: `SANITY_API_READ_TOKEN` for draft/private reads; `CHAT_ACCESS_TOKEN` plus the same value in the chat UI (once) to gate the API.
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `ANTHROPIC_API_KEY`. Optional: `ANTHROPIC_MODEL`, `SANITY_API_READ_TOKEN` for draft/private reads; `CHAT_ACCESS_TOKEN` plus the same value in the chat UI (once) to gate the API.
 3. `npm run dev` from `web/` → [http://localhost:3000](http://localhost:3000)
 
 Run Studio from repo root (`npm run dev`) on port **3333**; run the site from `web/` on **3000**.

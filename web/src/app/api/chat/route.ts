@@ -1,5 +1,6 @@
+import Anthropic from '@anthropic-ai/sdk'
+import type {MessageParam} from '@anthropic-ai/sdk/resources/messages'
 import {NextResponse} from 'next/server'
-import OpenAI from 'openai'
 import {fetchKnowledgeContext, snippetsToContextJson} from '@/lib/knowledge'
 
 export const maxDuration = 60
@@ -13,15 +14,39 @@ function checkChatToken(request: Request): boolean {
   return got === expected
 }
 
+/** Anthropic requires alternating user/assistant; merge consecutive same-role turns. */
+function toAnthropicMessages(messages: ChatMessage[]): MessageParam[] {
+  const trimmed = messages.filter((m) => m?.content?.trim())
+  while (trimmed.length && trimmed[0].role === 'assistant') trimmed.shift()
+  const out: MessageParam[] = []
+  for (const m of trimmed) {
+    const last = out[out.length - 1]
+    if (last && last.role === m.role) {
+      last.content = `${last.content}\n\n${m.content}`
+    } else {
+      out.push({role: m.role, content: m.content})
+    }
+  }
+  return out
+}
+
+function extractTextFromMessage(msg: Anthropic.Messages.Message): string {
+  const parts: string[] = []
+  for (const block of msg.content) {
+    if (block.type === 'text') parts.push(block.text)
+  }
+  return parts.join('\n').trim()
+}
+
 export async function POST(request: Request) {
   if (!checkChatToken(request)) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401})
   }
 
-  const apiKey = process.env.OPENAI_API_KEY
+  const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return NextResponse.json(
-      {error: 'Server missing OPENAI_API_KEY. Add it to web/.env.local.'},
+      {error: 'Server missing ANTHROPIC_API_KEY. Add it to web/.env.local.'},
       {status: 503},
     )
   }
@@ -33,13 +58,13 @@ export async function POST(request: Request) {
     return NextResponse.json({error: 'Invalid JSON'}, {status: 400})
   }
 
-  const messages = body.messages?.filter((m) => m?.role && m?.content) ?? []
-  if (!messages.length) {
+  const raw = body.messages?.filter((m) => m?.role && m?.content) ?? []
+  if (!raw.length) {
     return NextResponse.json({error: 'messages[] required'}, {status: 400})
   }
 
-  const lastUser = [...messages].reverse().find((m) => m.role === 'user')
-  if (!lastUser) {
+  const anthropicMessages = toAnthropicMessages(raw)
+  if (!anthropicMessages.length || anthropicMessages[0].role !== 'user') {
     return NextResponse.json({error: 'Include at least one user message'}, {status: 400})
   }
 
@@ -52,9 +77,8 @@ export async function POST(request: Request) {
     return NextResponse.json({error: msg}, {status: 502})
   }
 
-  const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
-
-  const openai = new OpenAI({apiKey})
+  const model =
+    process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514'
 
   const system = `You are the design-thinking knowledge assistant for a small internal team.
 You must answer ONLY from the JSON CONTEXT below (published entries from their CMS). 
@@ -64,16 +88,17 @@ Be concise. Cite entry types and titles when possible. Do not invent authors or 
 CONTEXT:
 ${contextJson}`
 
-  const completion = await openai.chat.completions.create({
+  const client = new Anthropic({apiKey})
+
+  const response = await client.messages.create({
     model,
-    messages: [
-      {role: 'system', content: system},
-      ...messages.map((m) => ({role: m.role, content: m.content})),
-    ],
+    max_tokens: 4096,
+    system,
+    messages: anthropicMessages,
     temperature: 0.3,
   })
 
-  const text = completion.choices[0]?.message?.content?.trim()
+  const text = extractTextFromMessage(response)
   if (!text) {
     return NextResponse.json({error: 'Empty model response'}, {status: 502})
   }

@@ -6,6 +6,9 @@ import {
   tagsField,
   relatedEntriesField,
   maturityField,
+  sourceAuthorField,
+  sourceTitleField,
+  sourceUrlField,
 } from '../objects/sharedFields'
 
 export const principleDocument = defineType({
@@ -16,6 +19,7 @@ export const principleDocument = defineType({
   description: 'A core belief, one-liner, or opinionated stance on how good design work gets done.',
   groups: [
     { name: 'content', title: 'Content', default: true },
+    { name: 'attribution', title: 'Attribution' },
     { name: 'taxonomy', title: 'Taxonomy & relations' },
   ],
   fields: [
@@ -74,6 +78,9 @@ export const principleDocument = defineType({
       group: 'content',
       description: 'Are there situations where this principle conflicts with another? Good principles have edges.',
     }),
+    { ...sourceAuthorField, group: 'attribution' },
+    { ...sourceTitleField, group: 'attribution' },
+    { ...sourceUrlField, group: 'attribution' },
     { ...phaseField, group: 'taxonomy' },
     { ...tagsField, group: 'taxonomy' },
     { ...confidenceField, group: 'taxonomy' },

@@ -78,3 +78,28 @@ export const maturityField = defineField({
   },
   initialValue: 'universal',
 })
+
+// ── Attribution fields ───────────────────────────────────────────────
+// Reusable across any document type that might reference an external
+// source — a book, article, talk, mentor, etc.
+
+export const sourceAuthorField = defineField({
+  name: 'sourceAuthor',
+  title: 'Source author',
+  type: 'reference',
+  to: [{ type: 'sourceAuthor' }],
+  description: 'Pick an existing author or create one — reuse across entries.',
+})
+
+export const sourceTitleField = defineField({
+  name: 'sourceTitle',
+  title: 'Source title',
+  type: 'string',
+  description: 'Book, article, talk, podcast episode, etc.',
+})
+
+export const sourceUrlField = defineField({
+  name: 'sourceUrl',
+  title: 'Source URL',
+  type: 'url',
+})

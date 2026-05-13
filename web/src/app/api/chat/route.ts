@@ -1,7 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type {MessageParam} from '@anthropic-ai/sdk/resources/messages'
 import {NextResponse} from 'next/server'
-import {fetchKnowledgeContext, snippetsToContextJson} from '@/lib/knowledge'
+import {
+  fetchRAGContext,
+  matchesToContextJson,
+  fetchSanityFallbackContext,
+  snippetsToContextJson,
+  isRAGAvailable,
+} from '@/lib/knowledge'
 
 export const maxDuration = 60
 
@@ -38,6 +44,51 @@ function extractTextFromMessage(msg: Anthropic.Messages.Message): string {
   return parts.join('\n').trim()
 }
 
+/** Extract the latest user question from the message history. */
+function getLatestQuestion(messages: ChatMessage[]): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user' && messages[i].content.trim()) {
+      return messages[i].content.trim()
+    }
+  }
+  return ''
+}
+
+/** Bounded context for Claude: RAG when configured, else (or on empty/error) Sanity GROQ. */
+async function retrieveChatContext(raw: ChatMessage[]): Promise<{
+  contextJson: string
+  retrievalMethod: string
+}> {
+  const question = getLatestQuestion(raw)
+
+  async function loadSanityGroq(label: string) {
+    const rows = await fetchSanityFallbackContext()
+    return {
+      contextJson: snippetsToContextJson(rows),
+      retrievalMethod: label,
+    }
+  }
+
+  if (isRAGAvailable() && question) {
+    try {
+      const matches = await fetchRAGContext(question)
+      if (matches.length > 0) {
+        return {
+          contextJson: matchesToContextJson(matches),
+          retrievalMethod: 'rag',
+        }
+      }
+      return loadSanityGroq('sanity-groq-empty-rag')
+    } catch {
+      return loadSanityGroq('sanity-groq-fallback')
+    }
+  }
+
+  return loadSanityGroq(
+    isRAGAvailable() && !question ? 'sanity-groq-no-question' : 'sanity-groq',
+  )
+}
+
 export async function POST(request: Request) {
   if (!checkChatToken(request)) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401})
@@ -69,23 +120,30 @@ export async function POST(request: Request) {
   }
 
   let contextJson: string
+  let retrievalMethod: string
   try {
-    const rows = await fetchKnowledgeContext()
-    contextJson = snippetsToContextJson(rows)
+    const ctx = await retrieveChatContext(raw)
+    contextJson = ctx.contextJson
+    retrievalMethod = ctx.retrievalMethod
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Sanity fetch failed'
+    const msg = e instanceof Error ? e.message : 'Context retrieval failed'
     return NextResponse.json({error: msg}, {status: 502})
   }
 
-  const model =
-    process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514'
+  const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514'
 
   const system = `You are the design-thinking knowledge assistant for a small internal team.
-You must answer ONLY from the JSON CONTEXT below (published entries from their CMS). 
+You must answer ONLY from the CONTEXT below (retrieved from their knowledge base).
 If the answer is not supported by CONTEXT, say you do not have that in the knowledge base and suggest what kind of entry would help.
-Be concise. Cite entry types and titles when possible. Do not invent authors or sources.
 
-CONTEXT:
+Guidelines for using context:
+- Cite entry types and titles when possible (e.g. "The framework 'How Might We' suggests…").
+- When an entry has a confidence level, reflect it: state evergreen knowledge with confidence, caveat experimental knowledge, and flag retired entries.
+- When an entry has a maturity level, calibrate your depth: give more foundational context for onboarding-level content, be more concise and nuanced for senior-level content.
+- Do not invent authors, sources, or knowledge not present in context.
+- Be concise but opinionated — the knowledge base is designed to embody judgment, not just retrieve notes.
+
+CONTEXT (retrieval: ${retrievalMethod}):
 ${contextJson}`
 
   const client = new Anthropic({apiKey})

@@ -42,12 +42,12 @@ Optional: install the [Supabase CLI](https://supabase.com/docs/guides/cli) and r
 
 ## Web app (`web/`)
 
-Next.js marketing shell plus **Knowledge chat** (`/chat`): fetches a bounded slice of published Sanity documents on each request and answers with **Anthropic Claude** using that context only (no user-written GROQ).
+Next.js marketing shell plus **Knowledge chat** (`/chat`): answers with **Anthropic Claude** from retrieved context. By default, context is a bounded **Sanity GROQ** fetch. If **`SUPABASE_URL`** and **`SUPABASE_SERVICE_ROLE_KEY`** are set (Vercel + local `web/.env.local`), the API calls the **`rag-query`** Edge Function first and falls back to GROQ on errors or empty matches.
 
 1. `cd web && cp .env.example .env.local`
-2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `ANTHROPIC_API_KEY`. Optional: `ANTHROPIC_MODEL`, `SANITY_API_READ_TOKEN` for draft/private reads; `CHAT_ACCESS_TOKEN` plus the same value in the chat UI (once) to gate the API.
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `ANTHROPIC_API_KEY`. Optional: `ANTHROPIC_MODEL`, `SANITY_API_READ_TOKEN`, `SUPABASE_*` for RAG, `CHAT_ACCESS_TOKEN` to gate the API.
 3. `npm run dev` from `web/` → [http://localhost:3000](http://localhost:3000)
 
 Run Studio from repo root (`npm run dev`) on port **3333**; run the site from `web/` on **3000**.
 
-**Schema note:** Insights and references now use a **Source author** document reference. If you had old plain-text author fields, copy those names into new **Source author** entries and pick them on each document.
+**Schema note:** **Source author** is a reusable document; **Attribution** (source author, title, URL) appears on insights and can be filled on frameworks, processes, and principles. **Reference** documents still use the **Author** field linked to the same `sourceAuthor` type.

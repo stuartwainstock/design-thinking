@@ -6,6 +6,9 @@ import {
   tagsField,
   relatedEntriesField,
   maturityField,
+  sourceAuthorField,
+  sourceTitleField,
+  sourceUrlField,
 } from '../objects/sharedFields'
 
 export const insightDocument = defineType({
@@ -16,6 +19,7 @@ export const insightDocument = defineType({
   description: 'A learning from research, reading, or lived experience — with your interpretation attached.',
   groups: [
     { name: 'content', title: 'Content', default: true },
+    { name: 'attribution', title: 'Attribution' },
     { name: 'taxonomy', title: 'Taxonomy & relations' },
   ],
   fields: [
@@ -59,30 +63,9 @@ export const insightDocument = defineType({
       of: [{ type: 'string' }],
       description: 'What should someone do differently because of this insight?',
     }),
-    defineField({
-      name: 'sourceUrl',
-      title: 'Source URL',
-      type: 'url',
-      group: 'content',
-    }),
-    defineField({
-      name: 'sourceAuthor',
-      title: 'Source author',
-      type: 'reference',
-      group: 'content',
-      to: [{type: 'sourceAuthor'}],
-      options: {
-        disableNew: false,
-      },
-      description: 'Pick an existing author or create one — reuse across insights.',
-    }),
-    defineField({
-      name: 'sourceTitle',
-      title: 'Source title',
-      type: 'string',
-      group: 'content',
-      description: 'Book, article, talk, podcast episode, etc.',
-    }),
+    { ...sourceAuthorField, group: 'attribution' },
+    { ...sourceTitleField, group: 'attribution' },
+    { ...sourceUrlField, group: 'attribution' },
     { ...phaseField, group: 'taxonomy' },
     { ...tagsField, group: 'taxonomy' },
     { ...confidenceField, group: 'taxonomy' },

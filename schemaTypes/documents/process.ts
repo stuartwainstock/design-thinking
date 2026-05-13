@@ -6,6 +6,9 @@ import {
   tagsField,
   relatedEntriesField,
   maturityField,
+  sourceAuthorField,
+  sourceTitleField,
+  sourceUrlField,
 } from '../objects/sharedFields'
 
 export const processDocument = defineType({
@@ -17,6 +20,7 @@ export const processDocument = defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'quality', title: 'Quality signals' },
+    { name: 'attribution', title: 'Attribution' },
     { name: 'taxonomy', title: 'Taxonomy & relations' },
   ],
   fields: [
@@ -99,6 +103,9 @@ export const processDocument = defineType({
       of: [{ type: 'string' }],
       description: 'The recurring pitfalls — what goes wrong and why.',
     }),
+    { ...sourceAuthorField, group: 'attribution' },
+    { ...sourceTitleField, group: 'attribution' },
+    { ...sourceUrlField, group: 'attribution' },
     { ...phaseField, group: 'taxonomy' },
     { ...tagsField, group: 'taxonomy' },
     { ...confidenceField, group: 'taxonomy' },

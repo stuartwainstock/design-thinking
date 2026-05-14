@@ -52,7 +52,13 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
         headers,
         body: JSON.stringify({messages: [...next]}),
       })
-      const data = (await res.json()) as {reply?: string; error?: string}
+      const rawBody = await res.text()
+      let data: {reply?: string; error?: string}
+      try {
+        data = JSON.parse(rawBody) as {reply?: string; error?: string}
+      } catch {
+        data = {error: rawBody.slice(0, 500) || res.statusText}
+      }
       if (!res.ok) {
         throw new Error(data.error ?? res.statusText)
       }

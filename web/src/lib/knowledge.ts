@@ -50,6 +50,7 @@ export async function fetchRAGContext(
     method: 'POST',
     headers: {
       Authorization: `Bearer ${config.key}`,
+      apikey: config.key,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -66,20 +67,56 @@ export async function fetchRAGContext(
     throw new Error(`rag-query failed: ${res.status} ${err}`)
   }
 
-  const data = (await res.json()) as {matches: KnowledgeMatch[]}
-  return data.matches ?? []
+  let data: unknown
+  try {
+    data = await res.json()
+  } catch {
+    throw new Error('rag-query returned non-JSON body')
+  }
+
+  return normalizeRagMatches(data)
+}
+
+/** Accept common Edge Function response shapes. */
+function normalizeRagMatches(data: unknown): KnowledgeMatch[] {
+  if (!data || typeof data !== 'object') return []
+  const o = data as Record<string, unknown>
+  const raw =
+    (Array.isArray(o.matches) && o.matches) ||
+    (Array.isArray(o.results) && o.results) ||
+    (Array.isArray(o.data) && o.data) ||
+    (o.data &&
+      typeof o.data === 'object' &&
+      Array.isArray((o.data as Record<string, unknown>).matches) &&
+      (o.data as Record<string, unknown>).matches) ||
+    []
+
+  const list = raw as unknown[]
+  return list.filter((m): m is KnowledgeMatch => {
+    if (!m || typeof m !== 'object') return false
+    const row = m as Record<string, unknown>
+    return (
+      typeof row.sanity_id === 'string' ||
+      typeof row.document_type === 'string' ||
+      typeof row.title === 'string' ||
+      typeof row.content_text === 'string'
+    )
+  }) as KnowledgeMatch[]
 }
 
 /** Format RAG matches as context for the Claude system prompt. */
 export function matchesToContextJson(matches: KnowledgeMatch[], maxChars = 24000): string {
-  const compact = matches.map((m) => ({
-    type: m.document_type,
-    title: m.title,
-    content: m.content_text,
-    confidence: (m.metadata?.confidence as string) ?? undefined,
-    maturity: (m.metadata?.maturity as string) ?? undefined,
-    similarity: Math.round(m.similarity * 1000) / 1000,
-  }))
+  const compact = matches.map((m) => {
+    const sim = typeof m.similarity === 'number' && !Number.isNaN(m.similarity) ? m.similarity : 0
+    return {
+      type: m.document_type ?? 'unknown',
+      title: m.title ?? '',
+      content: m.content_text ?? '',
+      confidence: (m.metadata?.confidence as string) ?? undefined,
+      maturity: (m.metadata?.maturity as string) ?? undefined,
+      similarity: Math.round(sim * 1000) / 1000,
+    }
+  })
   let text = JSON.stringify(compact, null, 0)
   if (text.length > maxChars) {
     text = text.slice(0, maxChars) + '\n…(truncated)'

@@ -148,13 +148,27 @@ ${contextJson}`
 
   const client = new Anthropic({apiKey})
 
-  const response = await client.messages.create({
-    model,
-    max_tokens: 4096,
-    system,
-    messages: anthropicMessages,
-    temperature: 0.3,
-  })
+  let response: Anthropic.Messages.Message
+  try {
+    response = await client.messages.create({
+      model,
+      max_tokens: 4096,
+      system,
+      messages: anthropicMessages,
+      temperature: 0.3,
+    })
+  } catch (err: unknown) {
+    console.error('[api/chat] Anthropic messages.create failed', err)
+    let message = 'Claude request failed'
+    let httpStatus = 502
+    if (err && typeof err === 'object') {
+      const e = err as Record<string, unknown>
+      if (typeof e.message === 'string') message = e.message
+      const status = e.status
+      if (typeof status === 'number' && status >= 400 && status < 600) httpStatus = status
+    }
+    return NextResponse.json({error: message}, {status: httpStatus})
+  }
 
   const text = extractTextFromMessage(response)
   if (!text) {

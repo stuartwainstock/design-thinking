@@ -73,22 +73,26 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
 
   if (requiresAccessToken && !effectiveToken) {
     return (
-      <div className="mx-auto max-w-lg space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Team access</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Enter the shared token your admin configured (<code className="rounded bg-zinc-100 px-1 dark:bg-zinc-900">CHAT_ACCESS_TOKEN</code> on the server).
+      <div className="border-border-playful bg-surface mx-auto max-w-lg space-y-4 rounded-3xl border-2 p-6 shadow-md">
+        <h2 className="text-brand text-lg font-extrabold">Team access</h2>
+        <p className="text-muted text-sm font-semibold">
+          Enter the shared token your admin configured (
+          <code className="bg-sun-wash text-brand font-mono rounded-md px-1.5 py-0.5 text-xs font-bold">
+            CHAT_ACCESS_TOKEN
+          </code>{' '}
+          on the server).
         </p>
         <input
           type="password"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          className="border-border-playful bg-surface-elevated focus:ring-cta/40 w-full rounded-2xl border-2 px-4 py-3 text-sm font-semibold outline-none transition-shadow focus:ring-4"
           placeholder="Access token"
         />
         <button
           type="button"
           onClick={saveToken}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+          className="bg-cta hover:bg-cta-hover rounded-full px-5 py-2.5 text-sm font-extrabold text-white uppercase tracking-wide shadow-sm transition-colors"
         >
           Continue
         </button>
@@ -97,15 +101,15 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
   }
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
+    <div className="relative mx-auto flex max-w-2xl flex-col gap-4">
       {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+        <p className="rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-900 dark:border-red-800 dark:bg-red-950/80 dark:text-red-100">
           {error}
         </p>
       ) : null}
-      <div className="min-h-[320px] space-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="border-border-playful bg-surface min-h-[320px] space-y-3 rounded-3xl border-2 p-5 shadow-md">
         {messages.length === 0 ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-muted text-sm font-semibold leading-relaxed">
             Ask about frameworks, processes, principles, or insights. Answers use your published Sanity content only.
           </p>
         ) : null}
@@ -114,23 +118,26 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
             key={`${m.role}-${i}`}
             className={
               m.role === 'user'
-                ? 'ml-8 rounded-lg bg-zinc-100 px-3 py-2 text-sm text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
-                : 'mr-8 rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-200'
+                ? 'bg-sun-wash text-foreground ml-6 rounded-2xl rounded-br-md px-4 py-3 text-sm font-medium shadow-sm md:ml-12'
+                : 'border-border-playful bg-surface-elevated text-foreground mr-6 rounded-2xl rounded-bl-md border px-4 py-3 text-sm font-medium shadow-sm md:mr-12'
             }
           >
-            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <span className="text-brand mb-1.5 block text-[0.65rem] font-extrabold uppercase tracking-[0.15em]">
               {m.role === 'user' ? 'You' : 'Assistant'}
             </span>
-            <div className="whitespace-pre-wrap">{m.content}</div>
+            <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
           </div>
         ))}
         {loading ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Thinking…</p>
+          <p className="text-muted flex items-center gap-2 text-sm font-bold">
+            <span className="bg-brand inline-flex size-2 animate-pulse rounded-full" aria-hidden />
+            Thinking…
+          </p>
         ) : null}
       </div>
       <div className="flex gap-2">
         <input
-          className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          className="border-border-playful bg-surface focus:ring-cta/35 flex-1 rounded-2xl border-2 px-4 py-3 text-sm font-semibold outline-none transition-shadow focus:ring-4"
           placeholder="Ask the knowledge base…"
           value={input}
           disabled={loading}
@@ -146,7 +153,7 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
           type="button"
           disabled={loading || !input.trim()}
           onClick={() => void send()}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900"
+          className="bg-cta hover:bg-cta-hover rounded-2xl px-5 py-3 text-sm font-extrabold tracking-wide text-white uppercase shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>

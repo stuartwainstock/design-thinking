@@ -1,11 +1,12 @@
 import type {Metadata} from 'next'
 import Link from 'next/link'
-import {Geist, Geist_Mono} from 'next/font/google'
+import {Geist_Mono, Nunito} from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const nunito = Nunito({
+  variable: '--font-nunito',
   subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
 })
 
 const geistMono = Geist_Mono({
@@ -24,19 +25,23 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
-        <header className="border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 text-sm">
-            <Link href="/" className="font-medium text-zinc-900 dark:text-zinc-50">
-              Home
+    <html lang="en" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="text-foreground flex min-h-full flex-col">
+        <header className="sticky top-0 z-10 px-4 pt-4 pb-2">
+          <nav className="border-border-playful bg-surface/90 text-foreground mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border px-2 py-2 pl-5 text-sm font-semibold shadow-sm backdrop-blur-md">
+            <Link
+              href="/"
+              className="text-brand hover:text-brand-muted inline-flex flex-col items-start gap-0.5 lowercase transition-colors"
+            >
+              <span className="flex gap-1 pl-1" aria-hidden>
+                <span className="bg-brand size-1.5 rounded-full" />
+                <span className="bg-brand size-1.5 rounded-full" />
+              </span>
+              <span className="leading-none tracking-tight">design thinking</span>
             </Link>
             <Link
               href="/chat"
-              className="rounded-full bg-zinc-900 px-3 py-1.5 text-white dark:bg-zinc-100 dark:text-zinc-900"
+              className="bg-cta hover:bg-cta-hover rounded-full px-4 py-2 text-white shadow-sm transition-colors"
             >
               Chat
             </Link>

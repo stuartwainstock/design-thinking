@@ -130,7 +130,7 @@ export async function POST(request: Request) {
     return NextResponse.json({error: msg}, {status: 502})
   }
 
-  const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514'
+  const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6'
 
   const system = `You are the design-thinking knowledge assistant for a small internal team.
 You must answer ONLY from the CONTEXT below (retrieved from their knowledge base).
@@ -166,6 +166,11 @@ ${contextJson}`
       if (typeof e.message === 'string') message = e.message
       const status = e.status
       if (typeof status === 'number' && status >= 400 && status < 600) httpStatus = status
+    }
+    // Anthropic returns HTTP 404 for unknown/retired model ids — don't reuse 404 here or clients think /api/chat is missing.
+    if (httpStatus === 404 && /model|not_found/i.test(message)) {
+      httpStatus = 400
+      message = `${message} — Set ANTHROPIC_MODEL to a current model (e.g. claude-sonnet-4-6) or remove it to use the app default.`
     }
     return NextResponse.json({error: message}, {status: httpStatus})
   }

@@ -23,7 +23,7 @@ User question → Next.js API route → Supabase Edge Function (embed + search)
 - **Sanity CMS** — structured content with rich field types, Portable Text, real-time collaboration, and GROQ for flexible querying. The team authors knowledge here; they never touch code to update what the agent knows.
 - **Supabase (pgvector)** — vector storage and similarity search. Edge Functions handle embedding on ingest and query. RLS is enabled; tables are locked to `service_role` only — no anonymous access, ever.
 - **OpenAI `text-embedding-3-small`** — embedding model. Anthropic does not offer an embeddings API. We use OpenAI solely for embeddings; all reasoning is Claude.
-- **Claude API** — the reasoning layer. Receives RAG context in the system prompt and answers only from that context. Model defaults to `claude-sonnet-4-20250514`.
+- **Claude API** — the reasoning layer. Receives RAG context in the system prompt and answers only from that context. Default model id in code is **`claude-sonnet-4-6`** (override with `ANTHROPIC_MODEL`).
 - **Next.js on Vercel** — the web surface. Server-side API route handles retrieval and Claude calls. No sensitive keys reach the browser.
 
 ### Data flow: publish → embed → store

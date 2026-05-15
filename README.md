@@ -12,7 +12,7 @@ Now you can do the following things:
 
 - **Project:** `eff153ps` · **Dataset:** `production`
 - **Dev:** `npm run dev` (Studio at [http://localhost:3333](http://localhost:3333) by default)
-- **Schema:** `schemaTypes/` — design-knowledge types (phase, tag, **source author**, framework, process, insight, principle, external resource). After schema edits run `npx sanity schema deploy`.
+- **Schema:** `schemaTypes/` — design-knowledge types (phase, tag, **source author**, framework, process, insight, principle, external resource); **site content** for web copy (singleton `siteContent`). After schema edits run `npx sanity schema deploy`.
 - **Seed data (optional):** `scripts/seed-data.ts` — example payloads; convert to NDJSON or import via the API when you are ready.
 
 **Note:** The document type for annotated links is `externalResource` (studio title still “Reference”) because `reference` is reserved in Sanity.
@@ -27,9 +27,13 @@ npm run deploy
 
 The CLI builds the Studio and uploads it to **Sanity hosting**. The first run asks you to choose a **hostname** (e.g. `your-name` → `https://your-name.sanity.studio`). Later deploys update the same host. Your `sanity.config.ts` already targets project **`eff153ps`** and dataset **`production`**, so the hosted Studio edits the same dataset you use locally.
 
-Optional: `npx sanity deploy --schema-required` so deploy fails if the schema cannot be stored. Add **`appId`** under `deployment` in `sanity.cli.ts` from [Manage → Studios](https://www.sanity.io/manage/project/eff153ps/studios) if you want pinned auto-updates instead of the generic warning.
+Optional: `npx sanity deploy --schema-required` so deploy fails if the schema cannot be stored. **`sanity.cli.ts`** includes **`deployment.appId`** so deploy is non-interactive.
 
 If the **Next.js site** (or another origin) calls the Sanity API from the browser, add that site URL under **API → CORS origins** for project `eff153ps` in [Sanity Manage](https://www.sanity.io/manage).
+
+### Storybook & Chromatic (design docs)
+
+The **web** app includes **Storybook** for UI/token documentation and a **Chromatic** GitHub Action. See **`web/README.md`** for commands and the `CHROMATIC_PROJECT_TOKEN` secret.
 
 ## Supabase
 

@@ -23,23 +23,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0E0E1A;
+    --background: #1F1D2B;
     --foreground: #F5F0E8;
-    --sunshine: #B8941E;
-    --sunshine-soft: #2A2510;
-    --sunshine-wash: #1A1808;
-    --brand: #7B9AFF;
-    --brand-muted: #A3B8FF;
-    --brand-light: #1A2040;
-    --cta: #FF8A5C;
-    --cta-hover: #FFA07A;
-    --pink: #FF7A90;
-    --green: #3DDBA8;
-    --purple: #A38FFF;
-    --surface: #16162A;
-    --surface-elevated: #1E1E36;
-    --border-playful: #2A2A44;
-    --muted: #9090A8;
+    --sunshine: #E2B93B;
+    --sunshine-soft: #302A18;
+    --sunshine-wash: #28241A;
+    --brand: #8DA6FF;
+    --brand-muted: #B0C2FF;
+    --brand-light: #252840;
+    --cta: #FF9468;
+    --cta-hover: #FFB08A;
+    --pink: #FF8BA0;
+    --green: #4DE8B6;
+    --purple: #B0A0FF;
+    --surface: #272536;
+    --surface-elevated: #302E42;
+    --border-playful: #3D3A50;
+    --muted: #A0A0B8;
   }
 }
 

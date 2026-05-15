@@ -1,40 +1,34 @@
 import Link from 'next/link'
 
-/* ── Decorative floating shapes ── */
-function FloatingShapes() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* Large warm glow top-right */}
-      <div className="bg-sunshine/25 absolute -right-20 -top-10 size-72 rounded-full blur-3xl md:size-96" />
-      {/* Soft brand glow bottom-left */}
-      <div className="bg-brand/10 absolute -left-24 bottom-12 size-56 rounded-full blur-3xl md:size-72" />
-      {/* Pink accent blob */}
-      <div className="bg-pink/15 absolute right-8 bottom-32 size-32 rounded-full blur-2xl md:right-20" />
-
-      {/* Small floating shape accents */}
-      <div className="animate-float absolute right-12 top-28 md:right-32 md:top-20">
-        <div className="bg-sunshine blob-1 size-10 opacity-60 md:size-14" />
-      </div>
-      <div className="animate-float-slow absolute left-4 top-48 md:left-16 md:top-40">
-        <div className="bg-pink blob-2 size-7 opacity-40 md:size-10" />
-      </div>
-      <div className="animate-bounce-gentle absolute right-4 bottom-48 md:right-24 md:bottom-40">
-        <div className="bg-brand blob-3 size-6 opacity-30 md:size-9" />
-      </div>
-      <div className="animate-wiggle absolute left-8 bottom-20 md:left-32 md:bottom-24">
-        <div className="bg-green size-5 rounded-full opacity-40 md:size-7" />
-      </div>
-      <div className="animate-pulse-soft absolute right-24 top-56 md:right-48">
-        <div className="bg-purple size-4 rounded-full opacity-35 md:size-6" />
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
   return (
+    <section className="relative flex flex-1 flex-col overflow-x-clip">
+      {/* ── Full-bleed background glows (outside the max-w container) ── */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="bg-sunshine/25 absolute -top-10 right-[5%] size-72 rounded-full blur-3xl md:size-[28rem]" />
+        <div className="bg-brand/10 absolute bottom-12 left-[2%] size-56 rounded-full blur-3xl md:size-80" />
+        <div className="bg-pink/12 absolute bottom-36 right-[15%] size-36 rounded-full blur-3xl" />
+      </div>
+
     <div className="relative mx-auto flex max-w-3xl flex-1 flex-col gap-12 px-4 py-16 md:py-28">
-      <FloatingShapes />
+      {/* Small animated accent shapes (relative to content) */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="animate-float absolute right-12 top-28 md:right-32 md:top-20">
+          <div className="bg-sunshine blob-1 size-10 opacity-60 md:size-14" />
+        </div>
+        <div className="animate-float-slow absolute left-4 top-48 md:left-16 md:top-40">
+          <div className="bg-pink blob-2 size-7 opacity-40 md:size-10" />
+        </div>
+        <div className="animate-bounce-gentle absolute right-4 bottom-48 md:right-24 md:bottom-40">
+          <div className="bg-brand blob-3 size-6 opacity-30 md:size-9" />
+        </div>
+        <div className="animate-wiggle absolute left-8 bottom-20 md:left-32 md:bottom-24">
+          <div className="bg-green size-5 rounded-full opacity-40 md:size-7" />
+        </div>
+        <div className="animate-pulse-soft absolute right-24 top-56 md:right-48">
+          <div className="bg-purple size-4 rounded-full opacity-35 md:size-6" />
+        </div>
+      </div>
 
       {/* ── Hero ── */}
       <div className="relative">
@@ -75,14 +69,6 @@ export default function Home() {
           </svg>
           Open knowledge chat
         </Link>
-        <a
-          href="https://www.sanity.io/docs"
-          className="border-border-playful text-brand hover:bg-sunshine-wash hover-lift inline-flex items-center justify-center rounded-full border-2 border-dashed bg-transparent px-6 py-4 text-sm font-bold transition-all"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Sanity docs
-        </a>
       </div>
 
       {/* ── Feature hints ── */}
@@ -120,5 +106,6 @@ export default function Home() {
         ))}
       </div>
     </div>
+    </section>
   )
 }

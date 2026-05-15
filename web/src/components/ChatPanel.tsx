@@ -130,11 +130,11 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
     <div className="relative mx-auto flex max-w-2xl flex-col gap-4">
       {/* Error banner */}
       {error ? (
-        <div className="flex items-start gap-3 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 dark:border-red-800 dark:bg-red-950/80">
+        <div className="flex items-start gap-3 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3">
           <span className="mt-0.5 text-base" aria-hidden>
             ⚠️
           </span>
-          <p className="text-sm font-semibold text-red-900 dark:text-red-100">{error}</p>
+          <p className="text-sm font-semibold text-red-900">{error}</p>
         </div>
       ) : null}
 

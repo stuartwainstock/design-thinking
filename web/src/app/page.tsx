@@ -33,7 +33,7 @@ function FloatingShapes() {
 
 export default function Home() {
   return (
-    <div className="relative mx-auto flex max-w-3xl flex-1 flex-col gap-12 overflow-hidden px-4 py-16 md:py-28">
+    <div className="relative mx-auto flex max-w-3xl flex-1 flex-col gap-12 px-4 py-16 md:py-28">
       <FloatingShapes />
 
       {/* ── Hero ── */}

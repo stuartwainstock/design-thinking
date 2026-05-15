@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ChatPage() {
   const requiresAccessToken = Boolean(process.env.CHAT_ACCESS_TOKEN)
   return (
-    <div className="relative mx-auto max-w-3xl flex-1 overflow-hidden px-4 py-10 md:py-14">
+    <div className="relative mx-auto max-w-3xl flex-1 px-4 py-10 md:py-14">
       {/* Decorative glows */}
       <div
         className="bg-sunshine/25 pointer-events-none absolute right-0 top-0 size-64 -translate-y-1/4 translate-x-1/4 rounded-full blur-3xl"

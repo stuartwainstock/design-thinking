@@ -1,5 +1,23 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Storybook & Chromatic
+
+Design system documentation lives in Storybook (Tailwind + tokens from `src/app/globals.css`).
+
+```bash
+npm run storybook          # local dev on :6006
+npm run build-storybook    # static build → storybook-static/
+```
+
+**Chromatic** publishes that build for visual review on pull requests.
+
+1. Sign in at [chromatic.com](https://www.chromatic.com) with GitHub and add this repository.
+2. Copy the **project token** for the `web` Storybook.
+3. Add GitHub repo secret **`CHROMATIC_PROJECT_TOKEN`** (Settings → Secrets → Actions).
+4. Optional local publish: `CHROMATIC_PROJECT_TOKEN=… npm run chromatic` from `web/`.
+
+CI runs `.github/workflows/chromatic.yml` on `main` pushes and PRs (`exitZeroOnChanges` — review diffs in Chromatic, not failing checks).
+
 ## Getting Started
 
 First, run the development server:

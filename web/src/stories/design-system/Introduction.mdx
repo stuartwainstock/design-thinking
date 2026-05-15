@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Introduction" />
+
+# Design system (living documentation)
+
+This Storybook documents the **current** web UI: Tailwind utility classes, CSS variables in `src/app/globals.css`, and patterns used on the landing and chat pages.
+
+It is **documentation only** — the Next.js app is unchanged. Use these stories when tuning copy in Sanity, adjusting tokens, or onboarding designers.
+
+## Foundations
+
+- **Colors** — CSS variables and Tailwind `bg-*` / `text-*` mappings
+- **Typography** — Nunito weights and type scale used in production
+- **Motion** — keyframes and utility classes (`animate-float`, `hover-lift`, blobs)
+
+## Patterns
+
+Reusable class combinations copied from `layout.tsx`, `page.tsx`, and `ChatPanel.tsx` — not separate React components yet.
+
+## Running locally
+
+```bash
+cd web
+npm run storybook
+```
+
+Build static docs: `npm run build-storybook`

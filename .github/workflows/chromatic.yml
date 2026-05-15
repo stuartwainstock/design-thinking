@@ -1,0 +1,42 @@
+# Publishes web/ Storybook to Chromatic for visual review on every PR and main push.
+# Requires repo secret: CHROMATIC_PROJECT_TOKEN (from https://www.chromatic.com)
+
+name: Chromatic
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@v13
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: web
+          buildScriptName: build-storybook
+          # Allow PR checks to pass; review visual diffs in the Chromatic UI
+          exitZeroOnChanges: true

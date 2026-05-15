@@ -4,14 +4,22 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 
 type Msg = {role: 'user' | 'assistant'; content: string}
 
-/* ── Starter prompts shown when the chat is empty ── */
-const STARTERS = [
+type ChatPanelProps = {
+  requiresAccessToken: boolean
+  emptyMessage?: string
+  starters?: string[]
+}
+
+const DEFAULT_STARTERS = [
   'What frameworks help with problem framing?',
   'Walk me through our discovery process',
   'What principles guide critique?',
 ]
 
-export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean}) {
+const DEFAULT_EMPTY =
+  'Ask about frameworks, processes, principles, or insights.\nAnswers come from your published knowledge base.'
+
+export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPanelProps) {
   const [token, setToken] = useState('')
   const [storedToken, setStoredToken] = useState('')
   const [messages, setMessages] = useState<Msg[]>([])
@@ -155,14 +163,17 @@ export function ChatPanel({requiresAccessToken}: {requiresAccessToken: boolean})
               />
             </div>
             <p className="text-muted text-center text-sm font-semibold leading-relaxed">
-              Ask about frameworks, processes, principles, or insights.
-              <br />
-              Answers come from your published knowledge base.
+              {(emptyMessage ?? DEFAULT_EMPTY).split('\n').map((line, i, arr) => (
+                <span key={i}>
+                  {line}
+                  {i < arr.length - 1 && <br />}
+                </span>
+              ))}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
-              {STARTERS.map((s) => (
+              {(starters ?? DEFAULT_STARTERS).map((s, idx) => (
                 <button
-                  key={s}
+                  key={`${idx}-${s}`}
                   type="button"
                   onClick={() => void send(s)}
                   className="border-border-playful text-brand hover:bg-sunshine-wash hover-lift rounded-full border-2 px-4 py-2 text-xs font-bold transition-all"

@@ -1,13 +1,16 @@
 import type {Metadata} from 'next'
 import {ChatPanel} from '@/components/ChatPanel'
+import {getSiteContent} from '@/lib/sanity'
 
 export const metadata: Metadata = {
   title: 'Knowledge chat',
   description: 'Ask questions grounded in the team design knowledge base.',
 }
 
-export default function ChatPage() {
+export default async function ChatPage() {
   const requiresAccessToken = Boolean(process.env.CHAT_ACCESS_TOKEN)
+  const site = await getSiteContent()
+
   return (
     <section className="relative flex flex-1 flex-col overflow-x-clip">
       {/* Full-bleed background glows */}
@@ -20,17 +23,20 @@ export default function ChatPage() {
         <header className="relative mb-8">
           <p className="text-cta flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
             <span className="bg-sunshine inline-block size-1.5 rounded-full" aria-hidden />
-            Knowledge chat
+            {site.chatEyebrow}
           </p>
           <h1 className="text-brand mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
-            Ask your team&apos;s brain
+            {site.chatHeadline}
           </h1>
           <p className="text-muted mt-3 max-w-2xl text-sm font-semibold leading-relaxed">
-            Every answer is grounded in your published frameworks, processes, and insights.
-            Think of it as a conversation with your team&apos;s collected wisdom.
+            {site.chatDescription}
           </p>
         </header>
-        <ChatPanel requiresAccessToken={requiresAccessToken} />
+        <ChatPanel
+          requiresAccessToken={requiresAccessToken}
+          emptyMessage={site.chatEmptyMessage}
+          starters={site.chatStarters}
+        />
       </div>
     </section>
   )

@@ -6,6 +6,7 @@ import { processDocument } from './documents/process'
 import { insightDocument } from './documents/insight'
 import { principleDocument } from './documents/principle'
 import { externalResourceDocument } from './documents/externalResource'
+import { siteContentDocument } from './documents/siteContent'
 import { stepObject } from './objects/step'
 
 export const schemaTypes = [
@@ -16,6 +17,9 @@ export const schemaTypes = [
 
   // Inline objects
   stepObject,
+
+  // Site-level singleton
+  siteContentDocument,
 
   // Core knowledge document types
   frameworkDocument,

@@ -1,47 +1,62 @@
 @import "tailwindcss";
 
-/* Playful light palette inspired by friendly healthcare / kids’ brand UI */
+/* ── Playful, warm, Maxima-inspired palette ── */
 :root {
-  --background: #fffbf3;
-  --foreground: #152238;
-  --sun: #ffe24a;
-  --sun-wash: #fff4c8;
-  --brand: #153a7a;
-  --brand-muted: #2a508f;
-  --cta: #ff5c1a;
-  --cta-hover: #e54e12;
-  --surface: #ffffff;
-  --surface-elevated: #fffef9;
-  --border-playful: #e8ddc4;
-  --muted: #5a6578;
+  --background: #FFF8E1;
+  --foreground: #1A1A2E;
+  --sunshine: #FFD43B;
+  --sunshine-soft: #FFF0B3;
+  --sunshine-wash: #FFFCEB;
+  --brand: #2B4ACB;
+  --brand-muted: #4A64D6;
+  --brand-light: #E8EDFF;
+  --cta: #FF6B35;
+  --cta-hover: #E85A28;
+  --pink: #FF4D6A;
+  --green: #00C389;
+  --purple: #7B61FF;
+  --surface: #FFFFFF;
+  --surface-elevated: #FFFEF5;
+  --border-playful: #F0E6C8;
+  --muted: #6B6B80;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0c1220;
-    --foreground: #f2f5fc;
-    --sun: #3d4f7a;
-    --sun-wash: #1e2a44;
-    --brand: #9ec5ff;
-    --brand-muted: #c9ddff;
-    --cta: #ff7a35;
-    --cta-hover: #ff9358;
-    --surface: #141c2e;
-    --surface-elevated: #1a2438;
-    --border-playful: #2a3548;
-    --muted: #9aa4b8;
+    --background: #0E0E1A;
+    --foreground: #F5F0E8;
+    --sunshine: #B8941E;
+    --sunshine-soft: #2A2510;
+    --sunshine-wash: #1A1808;
+    --brand: #7B9AFF;
+    --brand-muted: #A3B8FF;
+    --brand-light: #1A2040;
+    --cta: #FF8A5C;
+    --cta-hover: #FFA07A;
+    --pink: #FF7A90;
+    --green: #3DDBA8;
+    --purple: #A38FFF;
+    --surface: #16162A;
+    --surface-elevated: #1E1E36;
+    --border-playful: #2A2A44;
+    --muted: #9090A8;
   }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-sun: var(--sun);
-  --color-sun-wash: var(--sun-wash);
+  --color-sunshine: var(--sunshine);
+  --color-sunshine-soft: var(--sunshine-soft);
+  --color-sunshine-wash: var(--sunshine-wash);
   --color-brand: var(--brand);
   --color-brand-muted: var(--brand-muted);
+  --color-brand-light: var(--brand-light);
   --color-cta: var(--cta);
   --color-cta-hover: var(--cta-hover);
+  --color-pink: var(--pink);
+  --color-green: var(--green);
+  --color-purple: var(--purple);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
   --color-border-playful: var(--border-playful);
@@ -52,12 +67,53 @@
 
 body {
   background-color: var(--background);
-  background-image: radial-gradient(
-      ellipse 120% 80% at 100% -20%,
-      color-mix(in srgb, var(--sun-wash) 85%, transparent) 0%,
-      transparent 55%
-    ),
-    radial-gradient(ellipse 80% 50% at -10% 60%, color-mix(in srgb, var(--sun) 25%, transparent) 0%, transparent 45%);
   color: var(--foreground);
   font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
 }
+
+/* ── Floating shape keyframes ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(2deg); }
+  75% { transform: rotate(-2deg); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-bounce-gentle { animation: bounce-gentle 3s ease-in-out infinite; }
+.animate-pulse-soft { animation: pulse-soft 4s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 4s ease-in-out infinite; }
+
+/* ── Playful hover effects ── */
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Blob shape clip paths ── */
+.blob-1 { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+.blob-2 { border-radius: 40% 60% 70% 30% / 40% 70% 30% 60%; }
+.blob-3 { border-radius: 50% 50% 30% 70% / 70% 30% 50% 50%; }

@@ -1,6 +1,7 @@
 'use client'
 
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {AssistantMarkdown} from '@/components/AssistantMarkdown'
 
 type Msg = {role: 'user' | 'assistant'; content: string}
 
@@ -209,7 +210,11 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
               />
               {m.role === 'user' ? 'You' : 'Knowledge base'}
             </span>
-            <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+            {m.role === 'user' ? (
+              <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+            ) : (
+              <AssistantMarkdown content={m.content} />
+            )}
           </div>
         ))}
 

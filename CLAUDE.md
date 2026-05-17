@@ -102,6 +102,9 @@ Uses the same `ANTHROPIC_API_KEY` and optional `CHAT_ACCESS_TOKEN` as `/api/chat
 │   │   └── lib/
 │   │       ├── knowledge.ts        RAG + GROQ retrieval logic
 │   │       └── sanity.ts           Sanity client singleton
+│   ├── e2e/
+│   │   └── accessibility.spec.ts   axe WCAG 2.1 AA tests
+│   ├── playwright.config.ts        Playwright config for a11y tests
 │   ├── .env.example                Template for required env vars
 │   └── CLAUDE.md → AGENTS.md      Next.js-specific agent rules
 └── CLAUDE.md               ← You are here

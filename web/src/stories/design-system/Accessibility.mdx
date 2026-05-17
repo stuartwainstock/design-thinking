@@ -1,0 +1,60 @@
+import {Meta} from '@storybook/blocks'
+
+<Meta title="Design System/Accessibility" />
+
+# Accessibility
+
+WCAG 2.1 AA compliance for the chat surface and marketing pages. The playful brand stays intact — we just make sure everyone can use it.
+
+## Automated testing
+
+Every PR and push to `main` runs **axe-core** WCAG 2.1 AA scans via Playwright. A single violation fails the build.
+
+| What | Where |
+|------|-------|
+| Test suite | `web/e2e/accessibility.spec.ts` |
+| Playwright config | `web/playwright.config.ts` |
+| CI workflow | `.github/workflows/accessibility.yml` |
+| Run locally | `npm run test:a11y` |
+
+Tests cover three page states: landing page (`/`), chat empty state (`/chat`), and chat with a mocked conversation (loading + assistant reply). The chat API is stubbed in Playwright so scans stay fast and deterministic — no live Claude calls in CI.
+
+## Color contract
+
+Two CTA-family tokens exist for different purposes:
+
+- **`--cta`** (`#B8470F`) — button fills where white text sits on top. Passes 4.5:1 against white.
+- **`--cta-accent`** (`#FF6B35`) — decorative only (dots, loading pulses). Never used for text on light backgrounds.
+
+Eyebrows, badges, and small labels use `text-brand` (`#2B4ACB`), not orange.
+
+## Landmarks and live regions
+
+- **Skip link** — `.skip-link` in `layout.tsx`, visible on focus.
+- **Nav** — `<nav aria-label="Main">`.
+- **Main** — `<main id="main-content">`.
+- **Conversation log** — `role="log"` + `aria-live="polite"` on the message container.
+- **Errors** — `role="alert"` on the error banner.
+- **Loading** — `role="status"` with screen-reader-only text ("Knowledge base is thinking").
+
+## Forms
+
+Every input has an associated `<label>` (`.sr-only` when the visible context is sufficient). Placeholders are hints, not labels.
+
+## Focus
+
+`focus-visible` rings use `ring-brand` with offset. Applied to the chat composer input, send button, and export slides button.
+
+## Motion
+
+`@media (prefers-reduced-motion: reduce)` in `globals.css` disables all decorative animations (`float`, `bounce-gentle`, `pulse-soft`, `wiggle`) and removes the `hover-lift` transform. Chat auto-scroll uses `behavior: 'auto'` instead of `'smooth'`.
+
+## Adding new components
+
+When building new interactive elements:
+
+1. Use `--cta` (not `--cta-accent`) for any text-bearing element.
+2. Add a visible or `.sr-only` label to every input.
+3. Use `focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2` on interactive elements.
+4. Mark decorative elements with `aria-hidden`.
+5. Run `npm run test:a11y` before pushing — axe catches most regressions automatically.

@@ -18,11 +18,23 @@ Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: 
 | `npm run build` / `npm start` | Production build and server |
 | `npm run storybook` | Design system docs → [http://localhost:6006](http://localhost:6006) |
 | `npm run build-storybook` | Static Storybook → `storybook-static/` (gitignored) |
+| `npm run test:a11y` | Playwright + axe WCAG 2.1 AA checks on `/` and `/chat` |
 | `npm run chromatic` | Publish Storybook to Chromatic (needs `CHROMATIC_PROJECT_TOKEN`) |
 
 **Export as slides:** assistant replies include a CTA that calls `POST /api/export` (Claude structures content → PptxGenJS `.pptx` download). Same `ANTHROPIC_API_KEY` as chat.
 
 Typography: **Nunito** (see `src/app/layout.tsx` + Storybook `preview-head.html`).
+
+## Accessibility testing
+
+Automated WCAG 2.1 AA compliance checks run via **Playwright + @axe-core/playwright**. Tests scan the landing page and chat page (empty state + mocked conversation with loading and reply) and fail on any violation.
+
+- **Config:** `playwright.config.ts`
+- **Tests:** `e2e/accessibility.spec.ts`
+- **CI:** `.github/workflows/accessibility.yml` (runs on `main` and PRs alongside Chromatic)
+- **Run locally:** `npm run test:a11y` (starts the dev server automatically)
+
+First-time setup: `npx playwright install chromium` after `npm install`.
 
 ## Storybook & Chromatic
 

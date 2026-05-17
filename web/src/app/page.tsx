@@ -102,7 +102,7 @@ export default async function Home() {
                   {card.icon}
                 </span>
                 <p className="text-foreground mt-2 text-sm font-extrabold">{card.label}</p>
-                <p className="text-muted mt-0.5 text-xs font-semibold leading-relaxed">
+                <p className="text-foreground/75 mt-0.5 text-xs font-semibold leading-relaxed">
                   {card.description}
                 </p>
               </div>

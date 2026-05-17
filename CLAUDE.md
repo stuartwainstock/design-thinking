@@ -55,6 +55,17 @@ RAG (semantic search) → sanity-groq-empty-rag → sanity-groq-fallback → san
 
 This means the chat **always works** even without Supabase configured. Never break this fallback. Every new retrieval strategy should slot into this chain, not replace it.
 
+### Export to slides (web only)
+
+Separate from chat retrieval — does **not** read Sanity or Supabase again.
+
+1. User clicks **Export as slides** under an assistant message in `ChatPanel`.
+2. `POST /api/export` receives `{ content, question }` (assistant markdown + preceding user question).
+3. Claude restructures the text into 1–3 slides as JSON (`web/src/lib/exportSlides.ts` validates the shape).
+4. `web/src/lib/renderPptx.ts` builds a branded `.pptx` via PptxGenJS; browser downloads the file.
+
+Uses the same `ANTHROPIC_API_KEY` and optional `CHAT_ACCESS_TOKEN` as `/api/chat`. Content is truncated at 24,000 chars before structuring. Build spec: `prompts/export-to-pptx.md`.
+
 ## Repository structure
 
 ```
@@ -251,3 +262,57 @@ All surfaces should share the retrieval layer (`knowledge.ts` and the Edge Funct
 - Don't add document types to the webhook without also adding them to the GROQ fallback, the `relatedEntries` reference list, and the `schemaTypes/index.ts` export.
 - Don't use Anthropic for embeddings — they don't offer an embeddings API. Embeddings are OpenAI; reasoning is Claude. These are different concerns.
 - Don't make the agent neutral. It's supposed to have opinions. That's the whole point.
+
+---
+
+# Memory
+
+## Me
+Stuart, Design Leader. Building a design knowledge agent — a second brain for a product design team that makes institutional design leadership knowledge self-service.
+
+## People
+| Who | Role |
+|-----|------|
+→ Full list: memory/glossary.md, profiles: memory/people/
+
+## Terms
+| Term | Meaning |
+|------|---------|
+| RAG | Retrieval-Augmented Generation — semantic search + Claude answering |
+| pgvector | PostgreSQL vector extension in Supabase for similarity search |
+| GROQ | Sanity's query language (not Groq the AI company) |
+| Portable Text | Sanity's rich text format (array of blocks) |
+| Edge Functions | Supabase Deno-based serverless functions (embed + search) |
+| knowledge embeddings | The Supabase table storing vectorized design knowledge |
+| match_knowledge | SQL function for cosine similarity search |
+| text-embedding-3-small | OpenAI model used for 1536-dim embeddings |
+| retrieval method | Label in system prompt showing which fallback path was used |
+| confidence | Content maturity: evergreen / evolving / experimental / retired |
+| maturity | Audience level: universal / onboarding / practitioner / senior |
+| myTake | The interpretation field on Insights — the most valuable part |
+→ Full glossary: memory/glossary.md
+
+## Projects
+| Name | What |
+|------|------|
+| **Design Knowledge Agent** | RAG-powered chat for design team (Sanity → Supabase → Claude) |
+
+## Tools
+| Tool | Used for |
+|------|----------|
+| Sanity Studio | CMS for authoring knowledge (project: eff153ps, dataset: production) |
+| Supabase | Vector storage + Edge Functions for embed/search |
+| Next.js / Vercel | Web app hosting the chat interface |
+| Claude API | Reasoning layer (claude-sonnet-4-6 default) |
+| OpenAI | Embeddings only (text-embedding-3-small) |
+| Figma | Design work |
+| GitHub | Code repository |
+| Cursor | Primary code editor |
+| Slack | Team communication |
+| HEY | Personal email |
+| Google Docs | Shared documents and notes |
+
+## Preferences
+- Async-first workflow
+- Cursor + Claude Cowork for development
+- Opinions > neutrality (the knowledge base should have a point of view)

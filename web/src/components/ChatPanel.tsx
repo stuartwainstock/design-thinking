@@ -2,6 +2,7 @@
 
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {AssistantMarkdown} from '@/components/AssistantMarkdown'
+import {ExportSlidesButton} from '@/components/ExportSlidesButton'
 
 type Msg = {role: 'user' | 'assistant'; content: string}
 
@@ -27,6 +28,7 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [exportingIdx, setExportingIdx] = useState<number | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const effectiveToken = useMemo(() => {
@@ -94,6 +96,59 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
       }
     },
     [effectiveToken, input, loading, messages, requiresAccessToken],
+  )
+
+  /* ── Export assistant message as PPTX ── */
+  const exportSlides = useCallback(
+    async (msgIndex: number) => {
+      const msg = messages[msgIndex]
+      if (!msg || msg.role !== 'assistant') return
+
+      // Find the preceding user message as the question
+      let question = 'Design knowledge'
+      for (let j = msgIndex - 1; j >= 0; j--) {
+        if (messages[j].role === 'user' && messages[j].content.trim()) {
+          question = messages[j].content.trim()
+          break
+        }
+      }
+
+      setExportingIdx(msgIndex)
+      try {
+        const headers: Record<string, string> = {'Content-Type': 'application/json'}
+        if (requiresAccessToken && effectiveToken) {
+          headers['x-chat-access-token'] = effectiveToken
+        }
+        const res = await fetch('/api/export', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({content: msg.content, question}),
+        })
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({error: res.statusText}))
+          throw new Error((errData as {error?: string}).error ?? 'Export failed')
+        }
+        // Trigger browser download from the binary response
+        const blob = await res.blob()
+        const disposition = res.headers.get('Content-Disposition') ?? ''
+        const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
+        const filename = filenameMatch?.[1] ?? 'slides.pptx'
+
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Export failed')
+      } finally {
+        setExportingIdx(null)
+      }
+    },
+    [effectiveToken, messages, requiresAccessToken],
   )
 
   /* ── Token gate ── */
@@ -188,32 +243,44 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
 
         {/* Message bubbles */}
         {messages.map((m, i) => (
-          <div
-            key={`${m.role}-${i}`}
-            className={
-              m.role === 'user'
-                ? 'bg-brand text-white ml-8 rounded-2xl rounded-br-md px-4 py-3 text-sm font-medium shadow-sm md:ml-16'
-                : 'border-border-playful bg-surface-elevated text-foreground mr-8 rounded-2xl rounded-bl-md border-2 px-4 py-3 text-sm font-medium shadow-sm md:mr-16'
-            }
-          >
-            {/* Role badge */}
-            <span
-              className={`mb-1.5 inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.15em] ${
-                m.role === 'user' ? 'text-white/70' : 'text-cta'
-              }`}
+          <div key={`${m.role}-${i}`}>
+            <div
+              className={
+                m.role === 'user'
+                  ? 'bg-brand text-white ml-8 rounded-2xl rounded-br-md px-4 py-3 text-sm font-medium shadow-sm md:ml-16'
+                  : 'border-border-playful bg-surface-elevated text-foreground mr-8 rounded-2xl rounded-bl-md border-2 px-4 py-3 text-sm font-medium shadow-sm md:mr-16'
+              }
             >
+              {/* Role badge */}
               <span
-                className={`inline-block size-1.5 rounded-full ${
-                  m.role === 'user' ? 'bg-white/50' : 'bg-cta/60'
+                className={`mb-1.5 inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.15em] ${
+                  m.role === 'user' ? 'text-white/70' : 'text-cta'
                 }`}
-                aria-hidden
-              />
-              {m.role === 'user' ? 'You' : 'Knowledge base'}
-            </span>
-            {m.role === 'user' ? (
-              <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
-            ) : (
-              <AssistantMarkdown content={m.content} />
+              >
+                <span
+                  className={`inline-block size-1.5 rounded-full ${
+                    m.role === 'user' ? 'bg-white/50' : 'bg-cta/60'
+                  }`}
+                  aria-hidden
+                />
+                {m.role === 'user' ? 'You' : 'Knowledge base'}
+              </span>
+              {m.role === 'user' ? (
+                <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+              ) : (
+                <AssistantMarkdown content={m.content} />
+              )}
+            </div>
+
+            {/* Export CTA — below assistant messages, not while loading */}
+            {m.role === 'assistant' && !loading && (
+              <div className="mr-8 mt-1.5 flex md:mr-16">
+                <ExportSlidesButton
+                  disabled={exportingIdx !== null}
+                  loading={exportingIdx === i}
+                  onClick={() => void exportSlides(i)}
+                />
+              </div>
             )}
           </div>
         ))}

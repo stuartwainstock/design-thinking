@@ -20,6 +20,8 @@ Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: 
 | `npm run build-storybook` | Static Storybook → `storybook-static/` (gitignored) |
 | `npm run chromatic` | Publish Storybook to Chromatic (needs `CHROMATIC_PROJECT_TOKEN`) |
 
+**Export as slides:** assistant replies include a CTA that calls `POST /api/export` (Claude structures content → PptxGenJS `.pptx` download). Same `ANTHROPIC_API_KEY` as chat.
+
 Typography: **Nunito** (see `src/app/layout.tsx` + Storybook `preview-head.html`).
 
 ## Storybook & Chromatic

@@ -10,11 +10,12 @@ export function ExportSlidesButton({onClick, loading = false, disabled = false}:
       type="button"
       disabled={disabled || loading}
       onClick={onClick}
-      className="text-muted hover:text-brand hover:bg-sunshine-wash inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50"
+      aria-busy={loading}
+      className="text-muted hover:text-brand hover:bg-sunshine-wash inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:opacity-50"
     >
       {loading ? (
         <>
-          <span className="bg-cta inline-block size-1.5 animate-pulse rounded-full" aria-hidden />
+          <span className="bg-cta-accent inline-block size-1.5 animate-pulse rounded-full" aria-hidden />
           Generating slides…
         </>
       ) : (

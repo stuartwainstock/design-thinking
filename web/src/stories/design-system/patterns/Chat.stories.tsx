@@ -41,8 +41,8 @@ export const MessageBubbles: Story = {
         </p>
       </div>
       <div className="border-border-playful bg-surface-elevated text-foreground mr-16 rounded-2xl rounded-bl-md border-2 px-4 py-3 text-sm font-medium shadow-sm">
-        <span className="text-cta mb-1.5 inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.15em]">
-          <span className="bg-cta/60 inline-block size-1.5 rounded-full" aria-hidden />
+        <span className="text-brand mb-1.5 inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.15em]">
+          <span className="bg-brand/60 inline-block size-1.5 rounded-full" aria-hidden />
           Knowledge base
         </span>
         <p className="whitespace-pre-wrap leading-relaxed">

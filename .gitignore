@@ -33,3 +33,8 @@ mymind-import-review.json
 .env.*
 !.env.example
 *.local
+
+# Productivity plugin (personal, not project source)
+TASKS.md
+memory/
+dashboard.html

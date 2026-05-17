@@ -10,8 +10,11 @@
   --brand: #2B4ACB;
   --brand-muted: #4A64D6;
   --brand-light: #E8EDFF;
-  --cta: #FF6B35;
-  --cta-hover: #E85A28;
+  /* Button fill: white text must meet 4.5:1 (was #FF6B35 ~2.8:1) */
+  --cta: #B8470F;
+  --cta-hover: #9E3D12;
+  /* Decorative accent only — not for small text on light backgrounds */
+  --cta-accent: #FF6B35;
   --pink: #FF4D6A;
   --green: #00C389;
   --purple: #7B61FF;
@@ -33,6 +36,7 @@
   --color-brand-light: var(--brand-light);
   --color-cta: var(--cta);
   --color-cta-hover: var(--cta-hover);
+  --color-cta-accent: var(--cta-accent);
   --color-pink: var(--pink);
   --color-green: var(--green);
   --color-purple: var(--purple);
@@ -96,3 +100,50 @@ body {
 .blob-1 { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
 .blob-2 { border-radius: 40% 60% 70% 30% / 40% 70% 30% 60%; }
 .blob-3 { border-radius: 50% 50% 30% 70% / 70% 30% 50% 50%; }
+
+/* Screen-reader only — visible when focused (skip link) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.skip-link:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  z-index: 100;
+  top: 0.5rem;
+  left: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-slow,
+  .animate-bounce-gentle,
+  .animate-pulse-soft,
+  .animate-pulse,
+  .animate-wiggle {
+    animation: none !important;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+}

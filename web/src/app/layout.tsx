@@ -27,9 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="text-foreground flex min-h-full flex-col">
+        <a href="#main-content" className="skip-link sr-only">
+          Skip to main content
+        </a>
         {/* ── Nav ── */}
         <header className="sticky top-0 z-10 px-4 pt-4 pb-2">
-          <nav className="border-border-playful bg-surface/90 text-foreground mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border-2 px-3 py-2 pl-5 text-sm font-semibold shadow-md backdrop-blur-md">
+          <nav
+            aria-label="Main"
+            className="border-border-playful bg-surface/90 text-foreground mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border-2 px-3 py-2 pl-5 text-sm font-semibold shadow-md backdrop-blur-md"
+          >
             <Link
               href="/"
               className="text-brand hover:text-brand-muted group inline-flex items-center gap-2.5 lowercase transition-colors"
@@ -37,7 +43,7 @@ export default function RootLayout({
               {/* Decorative dots */}
               <span className="flex flex-col gap-0.5" aria-hidden>
                 <span className="flex gap-0.5">
-                  <span className="bg-cta size-1.5 rounded-full transition-transform group-hover:scale-125" />
+                  <span className="bg-cta-accent size-1.5 rounded-full transition-transform group-hover:scale-125" />
                   <span className="bg-sunshine size-1.5 rounded-full transition-transform group-hover:scale-125" />
                 </span>
                 <span className="flex gap-0.5">
@@ -59,7 +65,9 @@ export default function RootLayout({
         </header>
 
         {/* ── Main ── */}
-        <main className="flex flex-1 flex-col">{children}</main>
+        <main id="main-content" className="flex flex-1 flex-col">
+          {children}
+        </main>
 
         {/* ── Footer ── */}
         <footer className="border-border-playful mt-auto border-t-2 px-4 py-10">
@@ -76,7 +84,7 @@ export default function RootLayout({
               Built with care on{' '}
               <a
                 href="https://www.sanity.io"
-                className="text-brand hover:text-cta font-bold transition-colors"
+                className="text-brand hover:text-brand-muted font-bold transition-colors"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -86,7 +94,7 @@ export default function RootLayout({
               Powered by{' '}
               <a
                 href="https://www.anthropic.com"
-                className="text-brand hover:text-cta font-bold transition-colors"
+                className="text-brand hover:text-brand-muted font-bold transition-colors"
                 rel="noopener noreferrer"
                 target="_blank"
               >

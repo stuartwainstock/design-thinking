@@ -55,7 +55,10 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
 
   /* Auto-scroll to newest message */
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({behavior: 'smooth'})
+    const reduceMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    bottomRef.current?.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'})
   }, [messages, loading])
 
   const send = useCallback(
@@ -168,14 +171,19 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
           </code>{' '}
           on the server).
         </p>
+        <label htmlFor="chat-access-token" className="sr-only">
+          Team access token
+        </label>
         <input
+          id="chat-access-token"
           type="password"
           value={token}
           onChange={(e) => setToken(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') saveToken()
           }}
-          className="border-border-playful bg-surface-elevated focus:ring-cta/40 w-full rounded-2xl border-2 px-4 py-3 text-sm font-semibold outline-none transition-shadow focus:ring-4"
+          autoComplete="off"
+          className="border-border-playful bg-surface-elevated w-full rounded-2xl border-2 px-4 py-3 text-sm font-semibold outline-none transition-shadow focus-visible:ring-4 focus-visible:ring-brand/40"
           placeholder="Paste access token"
         />
         <button
@@ -194,7 +202,7 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
     <div className="relative mx-auto flex max-w-2xl flex-col gap-4">
       {/* Error banner */}
       {error ? (
-        <div className="flex items-start gap-3 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3">
+        <div role="alert" className="flex items-start gap-3 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3">
           <span className="mt-0.5 text-base" aria-hidden>
             ⚠️
           </span>
@@ -203,14 +211,20 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
       ) : null}
 
       {/* Messages area */}
-      <div className="border-border-playful bg-surface min-h-[360px] space-y-4 rounded-3xl border-2 p-5 shadow-lg md:p-6">
+      <div
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+        aria-label="Conversation"
+        className="border-border-playful bg-surface min-h-[360px] space-y-4 rounded-3xl border-2 p-5 shadow-lg md:p-6"
+      >
         {/* Empty state with starters */}
         {messages.length === 0 ? (
           <div className="flex flex-col items-center gap-5 py-8">
             <div className="flex gap-1.5" aria-hidden>
               <span className="bg-sunshine animate-bounce-gentle size-3 rounded-full" />
               <span
-                className="bg-cta animate-bounce-gentle size-3 rounded-full"
+                className="bg-cta-accent animate-bounce-gentle size-3 rounded-full"
                 style={{animationDelay: '0.15s'}}
               />
               <span
@@ -254,12 +268,12 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
               {/* Role badge */}
               <span
                 className={`mb-1.5 inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.15em] ${
-                  m.role === 'user' ? 'text-white/70' : 'text-cta'
+                  m.role === 'user' ? 'text-white/90' : 'text-brand'
                 }`}
               >
                 <span
                   className={`inline-block size-1.5 rounded-full ${
-                    m.role === 'user' ? 'bg-white/50' : 'bg-cta/60'
+                    m.role === 'user' ? 'bg-white/70' : 'bg-brand/60'
                   }`}
                   aria-hidden
                 />
@@ -288,18 +302,24 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
         {/* Loading indicator */}
         {loading ? (
           <div className="mr-8 flex items-center gap-3 md:mr-16">
-            <div className="border-border-playful bg-surface-elevated flex items-center gap-2 rounded-2xl rounded-bl-md border-2 px-4 py-3 shadow-sm">
-              <span className="flex gap-1" aria-hidden>
+            <p className="sr-only" role="status" aria-live="polite">
+              Knowledge base is thinking
+            </p>
+            <div
+              className="border-border-playful bg-surface-elevated flex items-center gap-2 rounded-2xl rounded-bl-md border-2 px-4 py-3 shadow-sm"
+              aria-hidden
+            >
+              <span className="flex gap-1">
                 <span
-                  className="bg-cta inline-block size-1.5 animate-pulse rounded-full"
+                  className="bg-cta-accent inline-block size-1.5 animate-pulse rounded-full"
                   style={{animationDelay: '0s'}}
                 />
                 <span
-                  className="bg-cta inline-block size-1.5 animate-pulse rounded-full"
+                  className="bg-cta-accent inline-block size-1.5 animate-pulse rounded-full"
                   style={{animationDelay: '0.2s'}}
                 />
                 <span
-                  className="bg-cta inline-block size-1.5 animate-pulse rounded-full"
+                  className="bg-cta-accent inline-block size-1.5 animate-pulse rounded-full"
                   style={{animationDelay: '0.4s'}}
                 />
               </span>
@@ -313,8 +333,12 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
 
       {/* Input area */}
       <div className="border-border-playful bg-surface flex items-center gap-2 rounded-2xl border-2 px-3 py-2 shadow-md transition-shadow focus-within:shadow-lg">
+        <label htmlFor="chat-message-input" className="sr-only">
+          Message
+        </label>
         <input
-          className="min-w-0 flex-1 bg-transparent px-2 py-2 text-sm font-semibold outline-none placeholder:text-muted/60"
+          id="chat-message-input"
+          className="min-w-0 flex-1 bg-transparent px-2 py-2 text-sm font-semibold outline-none placeholder:text-muted/60 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           placeholder="Ask the knowledge base…"
           value={input}
           disabled={loading}
@@ -330,7 +354,7 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
           type="button"
           disabled={loading || !input.trim()}
           onClick={() => void send()}
-          className="bg-cta hover:bg-cta-hover flex size-10 items-center justify-center rounded-xl text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          className="bg-cta hover:bg-cta-hover flex size-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Send message"
         >
           {/* Send arrow icon */}

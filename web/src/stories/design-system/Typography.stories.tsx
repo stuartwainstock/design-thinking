@@ -17,10 +17,10 @@ export const Scale: Story = {
         <code className="font-mono text-xs">layout.tsx</code>.
       </p>
       <div>
-        <p className="text-cta mb-2 text-xs font-extrabold uppercase tracking-[0.2em]">
+        <p className="text-brand mb-2 text-xs font-extrabold uppercase tracking-[0.2em]">
           Eyebrow
         </p>
-        <p className="text-cta flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.2em]">
+        <p className="text-brand flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.2em]">
           <span className="bg-sunshine inline-block size-2 rounded-full" aria-hidden />
           Design thinking
         </p>

@@ -20,7 +20,7 @@ export const SiteNav: Story = {
         >
           <span className="flex flex-col gap-0.5" aria-hidden>
             <span className="flex gap-0.5">
-              <span className="bg-cta size-1.5 rounded-full transition-transform group-hover:scale-125" />
+              <span className="bg-cta-accent size-1.5 rounded-full transition-transform group-hover:scale-125" />
               <span className="bg-sunshine size-1.5 rounded-full transition-transform group-hover:scale-125" />
             </span>
             <span className="flex gap-0.5">
@@ -54,12 +54,12 @@ export const Footer: Story = {
         </div>
         <p className="text-muted text-center text-xs font-semibold leading-relaxed">
           Built with care on{' '}
-          <a href="https://www.sanity.io" className="text-brand hover:text-cta font-bold">
+          <a href="https://www.sanity.io" className="text-brand hover:text-brand-muted font-bold">
             Sanity
           </a>
           {' · '}
           Powered by{' '}
-          <a href="https://www.anthropic.com" className="text-brand hover:text-cta font-bold">
+          <a href="https://www.anthropic.com" className="text-brand hover:text-brand-muted font-bold">
             Claude
           </a>
         </p>

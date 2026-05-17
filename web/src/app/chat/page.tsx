@@ -21,7 +21,7 @@ export default async function ChatPage() {
 
       <div className="relative mx-auto max-w-3xl flex-1 px-4 py-10 md:py-14">
         <header className="relative mb-8">
-          <p className="text-cta flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
+          <p className="text-brand flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
             <span className="bg-sunshine inline-block size-1.5 rounded-full" aria-hidden />
             {site.chatEyebrow}
           </p>

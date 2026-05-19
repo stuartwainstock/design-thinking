@@ -104,14 +104,34 @@ function normalizeRagMatches(data: unknown): KnowledgeMatch[] {
   }) as KnowledgeMatch[]
 }
 
+function linkFromMetadata(metadata: Record<string, unknown> | undefined): string | undefined {
+  if (!metadata) return undefined
+  const sourceUrl = metadata.sourceUrl
+  if (typeof sourceUrl === 'string' && sourceUrl.trim()) return sourceUrl.trim()
+  const url = metadata.url
+  if (typeof url === 'string' && url.trim()) return url.trim()
+  return undefined
+}
+
+function sourceTitleFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): string | undefined {
+  const t = metadata?.sourceTitle
+  return typeof t === 'string' && t.trim() ? t.trim() : undefined
+}
+
 /** Format RAG matches as context for the Claude system prompt. */
 export function matchesToContextJson(matches: KnowledgeMatch[], maxChars = 24000): string {
   const compact = matches.map((m) => {
     const sim = typeof m.similarity === 'number' && !Number.isNaN(m.similarity) ? m.similarity : 0
+    const sourceUrl = linkFromMetadata(m.metadata)
+    const sourceTitle = sourceTitleFromMetadata(m.metadata)
     return {
       type: m.document_type ?? 'unknown',
       title: m.title ?? '',
       content: m.content_text ?? '',
+      ...(sourceTitle ? {sourceTitle} : {}),
+      ...(sourceUrl ? {sourceUrl} : {}),
       confidence: (m.metadata?.confidence as string) ?? undefined,
       maturity: (m.metadata?.maturity as string) ?? undefined,
       similarity: Math.round(sim * 1000) / 1000,
@@ -145,6 +165,7 @@ const KNOWLEDGE_SNIPPET_QUERY = `*[_type in $types]|order(_updatedAt desc)[0...4
   "sourceAuthor": sourceAuthor->name,
   sourceTitle,
   sourceUrl,
+  url,
   "author": author->name,
   "resourceType": resourceType
 }`
@@ -188,7 +209,7 @@ export function snippetsToContextJson(rows: KnowledgeSnippet[], maxChars = 14000
       maturity: r.maturity,
       sourceAuthor: r.sourceAuthor,
       sourceTitle: r.sourceTitle,
-      sourceUrl: r.sourceUrl,
+      sourceUrl: (r.sourceUrl as string) ?? (r.url as string) ?? undefined,
       author: r.author,
       resourceType: r.resourceType,
     }

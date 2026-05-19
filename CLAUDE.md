@@ -32,7 +32,7 @@ User question → Next.js API route → Supabase Edge Function (embed + search)
 2. Sanity webhook fires (filtered to `framework`, `process`, `insight`, `principle`, `externalResource`).
 3. `sanity-webhook` Edge Function receives the event, fetches the full document from Sanity API, flattens all content (Portable Text blocks, string arrays, step objects) into a single `content_text`.
 4. Calls OpenAI to generate a 1536-dimension embedding.
-5. Upserts into `knowledge_embeddings` (keyed on `sanity_id`). Stores `document_type`, `title`, `content_text`, `metadata` (confidence, maturity, phases, tags), and the embedding vector.
+5. Upserts into `knowledge_embeddings` (keyed on `sanity_id`). Stores `document_type`, `title`, `content_text`, `metadata` (confidence, maturity, phases, tags, sourceTitle, sourceUrl, url for references), and the embedding vector. Source URLs are also flattened into `content_text` for search.
 6. Logs the event to `webhook_log` for debugging.
 7. On delete/unpublish: removes the embedding row.
 

@@ -1,6 +1,7 @@
 import type {Metadata} from 'next'
 import Link from 'next/link'
 import {Geist_Mono, Nunito} from 'next/font/google'
+import {GoogleAnalytics} from '@/components/GoogleAnalytics'
 import './globals.css'
 
 const nunito = Nunito({
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="text-foreground flex min-h-full flex-col">
+        <GoogleAnalytics />
         <a href="#main-content" className="skip-link sr-only">
           Skip to main content
         </a>

@@ -8,6 +8,7 @@ import {
   snippetsToContextJson,
   isRAGAvailable,
 } from '@/lib/knowledge'
+import {logQuery} from '@/lib/queryLog'
 
 export const maxDuration = 60
 
@@ -128,6 +129,21 @@ export async function POST(request: Request) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Context retrieval failed'
     return NextResponse.json({error: msg}, {status: 502})
+  }
+
+  // Fire-and-forget query log — never blocks the response
+  const question = getLatestQuestion(raw)
+  if (question) {
+    let matchedTypes: string[] = []
+    try {
+      const parsed = JSON.parse(contextJson) as {type?: string}[]
+      if (Array.isArray(parsed)) {
+        matchedTypes = [...new Set(parsed.map((d) => d.type).filter(Boolean) as string[])]
+      }
+    } catch {
+      /* context may not be parseable — that's fine */
+    }
+    void logQuery({question, retrievalMethod, matchedTypes})
   }
 
   const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6'

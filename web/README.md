@@ -8,7 +8,7 @@ Next.js App Router app: **landing** and **knowledge chat** (`/chat`). Copy for m
 cp .env.example .env.local
 ```
 
-Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
+Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `NEXT_PUBLIC_GA_MEASUREMENT_ID` (GA4), `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
 
 ## Scripts
 
@@ -24,6 +24,12 @@ Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: 
 **Export as slides:** assistant replies include a CTA that calls `POST /api/export` (Claude structures content → PptxGenJS `.pptx` download). Same `ANTHROPIC_API_KEY` as chat.
 
 Typography: **Nunito** (see `src/app/layout.tsx` + Storybook `preview-head.html`).
+
+## Analytics
+
+**GA4:** Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` to enable pageview tracking. The `GoogleAnalytics` component renders nothing when unset.
+
+**Query logging:** Every chat question is logged to Supabase `chat_queries` (question text, retrieval method, matched doc types). Requires Supabase keys; silently skips when unconfigured. Run the migration at `supabase/migrations/20260518_create_chat_queries.sql` to create the table.
 
 ## Accessibility testing
 

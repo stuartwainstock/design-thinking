@@ -107,6 +107,9 @@ Uses the same `ANTHROPIC_API_KEY` and optional `CHAT_ACCESS_TOKEN` as `/api/chat
 │   ├── playwright.config.ts        Playwright config for a11y tests
 │   ├── .env.example                Template for required env vars
 │   └── CLAUDE.md → AGENTS.md      Next.js-specific agent rules
+├── supabase/
+│   └── migrations/
+│       └── 20260518_create_chat_queries.sql   Query log table
 └── CLAUDE.md               ← You are here
 ```
 
@@ -254,6 +257,15 @@ The current surface is a web chat. Planned future surfaces include:
 - **CLI / Cursor integration** — knowledge available during development.
 
 All surfaces should share the retrieval layer (`knowledge.ts` and the Edge Functions). The system prompt may vary per surface, but the context format should not. Design retrieval changes with multiple consumers in mind.
+
+### Analytics and query tracking
+
+Two layers:
+
+- **GA4** — vanilla pageview and engagement tracking via `gtag.js`. The `GoogleAnalytics` component in `layout.tsx` reads `NEXT_PUBLIC_GA_MEASUREMENT_ID` and renders nothing when unset.
+- **Query logging** — every chat question is logged to the `chat_queries` table in Supabase via `logQuery()` in `lib/queryLog.ts`. Fire-and-forget (called with `void` from `route.ts`), never blocks the response, silently skips when Supabase is unconfigured. Logs: question text (capped at 2000 chars), retrieval method, and document types matched.
+
+The query log uses the same Supabase service role key as RAG. RLS is enabled with no policies — service role only, no anonymous access. The migration is in `supabase/migrations/20260518_create_chat_queries.sql`.
 
 ## Things not to do
 

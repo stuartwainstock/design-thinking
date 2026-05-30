@@ -332,17 +332,24 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
       </div>
 
       {/* Input area */}
-      <div className="border-border-playful bg-surface flex items-center gap-2 rounded-2xl border-2 px-3 py-2 shadow-md transition-shadow focus-within:shadow-lg">
+      <div className="border-border-playful bg-surface flex items-end gap-2 rounded-2xl border-2 px-3 py-2 shadow-md transition-shadow focus-within:shadow-lg">
         <label htmlFor="chat-message-input" className="sr-only">
           Message
         </label>
-        <input
+        <textarea
           id="chat-message-input"
-          className="min-w-0 flex-1 bg-transparent px-2 py-2 text-sm font-semibold outline-none placeholder:text-muted/60 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          rows={1}
+          className="min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm font-semibold leading-relaxed outline-none placeholder:text-muted/60 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           placeholder="Ask the knowledge base…"
           value={input}
           disabled={loading}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value)
+            // Auto-resize: reset then grow to content (max 6 rows)
+            const el = e.target
+            el.style.height = 'auto'
+            el.style.height = `${Math.min(el.scrollHeight, 144)}px`
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
@@ -354,7 +361,7 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
           type="button"
           disabled={loading || !input.trim()}
           onClick={() => void send()}
-          className="bg-cta hover:bg-cta-hover flex size-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+          className="bg-cta hover:bg-cta-hover mb-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Send message"
         >
           {/* Send arrow icon */}

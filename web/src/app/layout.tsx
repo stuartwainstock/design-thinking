@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   description: 'Design knowledge base and team chat.',
 }
 
+/** Fallback ISR if the Sanity → /api/revalidate webhook misses; primary refresh is on publish. */
+export const revalidate = 60
+
 export default function RootLayout({
   children,
 }: Readonly<{

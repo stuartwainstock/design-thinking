@@ -258,6 +258,10 @@ The current surface is a web chat. Planned future surfaces include:
 
 All surfaces should share the retrieval layer (`knowledge.ts` and the Edge Functions). The system prompt may vary per surface, but the context format should not. Design retrieval changes with multiple consumers in mind.
 
+### Site content cache (landing + chat copy)
+
+Copy is loaded via `getSiteContent()` in `web/src/lib/sanity.ts` from the `siteContent` singleton. Pages use ISR (`revalidate = 60` on the root layout) as a fallback. For instant updates when editors publish in Studio, set `REVALIDATE_SECRET` on Vercel and point a Sanity webhook at `POST /api/revalidate?secret=…` filtered to `_type == "siteContent"`. See `web/README.md` for setup steps.
+
 ### Analytics and query tracking
 
 Two layers:

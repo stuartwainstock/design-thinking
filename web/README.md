@@ -8,7 +8,7 @@ Next.js App Router app: **landing** and **knowledge chat** (`/chat`). Copy for m
 cp .env.example .env.local
 ```
 
-Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `NEXT_PUBLIC_GA_MEASUREMENT_ID` (GA4), `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
+Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `REVALIDATE_SECRET` (instant landing/chat copy after Studio publish), `NEXT_PUBLIC_GA_MEASUREMENT_ID` (GA4), `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
 
 ## Scripts
 
@@ -49,6 +49,28 @@ Stories live under `src/stories/design-system/`. Token reference: `tokenData.ts`
 **Chromatic** (CI): add GitHub secret **`CHROMATIC_PROJECT_TOKEN`** from [chromatic.com](https://www.chromatic.com). Workflow: `.github/workflows/chromatic.yml` (runs on `main` and PRs; `exitZeroOnChanges` — review visuals in Chromatic).
 
 Local publish: `CHROMATIC_PROJECT_TOKEN=… npm run chromatic` from this directory.
+
+## Site content cache (instant updates)
+
+Landing and chat copy come from the Sanity **Site content** singleton. Pages use ISR (`revalidate = 60`) as a fallback; for instant updates on publish, set `REVALIDATE_SECRET` on Vercel and add a Sanity webhook:
+
+1. Generate a secret: `openssl rand -hex 32`
+2. Add `REVALIDATE_SECRET` to Vercel (Production + Preview) and `web/.env.local` for local tests
+3. In [Sanity Manage → APIs → Webhooks](https://www.sanity.io/manage/project/eff153ps/api/webhooks), create a webhook:
+   - **URL:** `https://<your-production-domain>/api/revalidate?secret=<REVALIDATE_SECRET>`
+   - **Dataset:** production
+   - **Trigger:** Create, Update, Delete (or at least Update)
+   - **Filter:** `_type == "siteContent"`
+   - **Projection:** `{_id, _type}` (minimal payload is fine)
+   - **HTTP method:** POST
+
+After publishing Site content, the next request to `/` or `/chat` should show new copy (no redeploy). Test locally:
+
+```bash
+curl -X POST "http://localhost:3000/api/revalidate?secret=YOUR_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"_type":"siteContent","_id":"siteContent"}'
+```
 
 ## Deploy
 

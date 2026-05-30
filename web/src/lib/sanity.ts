@@ -80,7 +80,11 @@ const SITE_CONTENT_QUERY = `*[_type == "siteContent" && _id == "siteContent"][0]
 
 export async function getSiteContent(): Promise<SiteContent> {
   try {
-    const data = await getSanityReadClient().fetch<Partial<SiteContent> | null>(SITE_CONTENT_QUERY)
+    const data = await getSanityReadClient().fetch<Partial<SiteContent> | null>(
+      SITE_CONTENT_QUERY,
+      {},
+      {next: {revalidate: 60}},
+    )
     if (!data) return SITE_CONTENT_DEFAULTS
     const merged: SiteContent = {...SITE_CONTENT_DEFAULTS, ...stripNulls(data)}
 

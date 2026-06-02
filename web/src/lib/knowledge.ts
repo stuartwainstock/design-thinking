@@ -179,9 +179,6 @@ export async function fetchSanityFallbackContext(): Promise<KnowledgeSnippet[]> 
       'insight',
       'principle',
       'externalResource',
-      'phase',
-      'tag',
-      'sourceAuthor',
     ],
   })
 }

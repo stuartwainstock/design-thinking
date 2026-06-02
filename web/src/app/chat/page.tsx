@@ -3,8 +3,9 @@ import {ChatPanel} from '@/components/ChatPanel'
 import {getSiteContent} from '@/lib/sanity'
 
 export const metadata: Metadata = {
-  title: 'Knowledge chat',
-  description: 'Ask questions grounded in the team design knowledge base.',
+  title: 'Design thinking knowledge — Chat',
+  description:
+    'Ask questions and get opinionated answers grounded in your published design knowledge base.',
 }
 
 export default async function ChatPage() {

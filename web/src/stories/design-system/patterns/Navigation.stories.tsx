@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/react'
+import Link from 'next/link'
 
 const meta: Meta = {
   title: 'Design System/Patterns/Navigation',
@@ -14,7 +15,7 @@ export const SiteNav: Story = {
   render: () => (
     <header className="px-4 pt-4 pb-2">
       <nav className="border-border-playful bg-surface/90 text-foreground mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border-2 px-3 py-2 pl-5 text-sm font-semibold shadow-md backdrop-blur-md">
-        <a
+        <Link
           href="/"
           className="text-brand hover:text-brand-muted group inline-flex items-center gap-2.5 lowercase transition-colors"
         >
@@ -29,13 +30,13 @@ export const SiteNav: Story = {
             </span>
           </span>
           <span className="text-base font-extrabold leading-none tracking-tight">design thinking</span>
-        </a>
-        <a
+        </Link>
+        <Link
           href="/chat"
           className="bg-cta hover:bg-cta-hover hover-lift rounded-full px-5 py-2.5 text-sm font-extrabold tracking-wide text-white uppercase shadow-sm transition-colors"
         >
           Chat
-        </a>
+        </Link>
       </nav>
     </header>
   ),

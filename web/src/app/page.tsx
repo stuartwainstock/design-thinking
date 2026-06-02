@@ -1,5 +1,12 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {getSiteContent} from '@/lib/sanity'
+
+export const metadata: Metadata = {
+  title: 'Design thinking knowledge — Home',
+  description:
+    "Your team's design wisdom — frameworks, processes, principles, and insights curated by your design leaders.",
+}
 
 const CARD_COLORS = [
   'bg-sunshine/20 border-sunshine/40',
@@ -16,8 +23,8 @@ export default async function Home() {
   return (
     <section className="relative flex flex-1 flex-col overflow-x-clip">
       {/* ── Full-bleed background glows ── */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="bg-sunshine/25 absolute -top-10 right-[5%] size-72 rounded-full blur-3xl md:size-[28rem]" />
+      <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
+        <div className="bg-sunshine/25 absolute -top-10 right-[5%] size-72 rounded-full blur-3xl md:size-112" />
         <div className="bg-brand/10 absolute bottom-12 left-[2%] size-56 rounded-full blur-3xl md:size-80" />
         <div className="bg-pink/12 absolute bottom-36 right-[15%] size-36 rounded-full blur-3xl" />
       </div>

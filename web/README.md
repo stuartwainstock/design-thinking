@@ -31,6 +31,8 @@ Typography: **Nunito** (see `src/app/layout.tsx` + Storybook `preview-head.html`
 
 **Query logging:** Every chat question is logged to Supabase `chat_queries` (question text, retrieval method, matched doc types). Requires Supabase keys; silently skips when unconfigured. Run the migration at `supabase/migrations/20260518_create_chat_queries.sql` to create the table.
 
+**Admin dashboard:** Set `ADMIN_ACCESS_TOKEN` and open `/admin/queries` for an executive birds-eye view of question patterns (not linked from public nav; `noindex`).
+
 ## Accessibility testing
 
 Automated WCAG 2.1 AA compliance checks run via **Playwright + @axe-core/playwright**. Tests scan the landing page and chat page (empty state + mocked conversation with loading and reply) and fail on any violation.

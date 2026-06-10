@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "main": "package.json",
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "sanity build",
     "deploy": "sanity deploy",
@@ -16,11 +19,11 @@
   ],
   "dependencies": {
     "@sanity/icons": "^3.7.4",
-    "@sanity/vision": "^5.25.1",
-    "@supabase/supabase-js": "^2.49.8",
+    "@sanity/vision": "^5.31.1",
+    "@supabase/supabase-js": "^2.108.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "sanity": "^5.25.1",
+    "sanity": "^5.31.1",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {

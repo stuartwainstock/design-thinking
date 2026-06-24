@@ -1,57 +1,81 @@
-# Sanity Clean Content Studio
+# Design Knowledge Agent
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+**A second brain for a product design team.** Not a chatbot, not a wiki — a system that turns institutional design leadership knowledge into something self-service, so that quality standards are *implicit* in the answers rather than something a designer has to go hunting for.
 
-Now you can do the following things:
+A designer asks a question. The agent answers with the team's own judgment, frameworks, and principles — cited, opinionated, and calibrated to the asker's experience level.
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+> **North star:** if the design lead would say it in a critique, the agent should be able to say it too.
 
-## This repo
+---
 
-- **Project:** `eff153ps` · **Dataset:** `production`
-- **Dev:** `npm run dev` (Studio at [http://localhost:3333](http://localhost:3333) by default)
-- **Schema:** `schemaTypes/` — design-knowledge types (phase, tag, **source author**, framework, process, insight, principle, external resource); **site content** for web copy (singleton `siteContent`). After schema edits run `npx sanity schema deploy`.
-- **Seed data (optional):** `scripts/seed-data.ts` — example payloads; convert to NDJSON or import via the API when you are ready.
+## The idea
 
-**Note:** The document type for annotated links is `externalResource` (studio title still “Reference”) because `reference` is reserved in Sanity.
+Most design knowledge lives in people's heads, scattered Slack threads, and abandoned wiki pages. It decays. It's invisible to new hires. It can't scale past the few senior people who hold it.
 
-### Host the Studio on Sanity (production dataset)
+This project treats that knowledge as **structured, authored content** — frameworks, processes, insights, principles, and annotated references — and puts a reasoning layer on top of it. The result is a teammate you can ask "how should I run this discovery phase?" or "what does good critique look like here?" and get an answer that sounds like *your* team, not a generic AI.
 
-From the repo root, with your Sanity account logged in (`npx sanity login` if needed):
+Two things make it more than a search box:
 
-```bash
-npm run deploy
+- **It has a point of view.** Every entry carries a `confidence` level (evergreen → experimental) and a `maturity` level (onboarding → senior). The agent uses these to calibrate *how* it talks — stating evergreen principles with conviction, caveating experimental ones, and giving juniors more foundational context than it gives senior practitioners.
+- **It only speaks from the team's knowledge.** Answers are grounded in retrieved content via RAG. If the knowledge base doesn't cover something, the agent says so — and suggests what kind of entry would fill the gap.
+
+---
+
+## The tech powering it
+
+```
+Sanity Studio (authoring) ──webhook──▶ Supabase Edge Function (embed + store)
+                                              │
+                                              ▼
+   User question ──▶ Next.js API route ──▶ Edge Function (embed + search)
+                                              │
+                                              ▼
+              Claude ◀── RAG context ◀── pgvector similarity search
 ```
 
-The CLI builds the Studio and uploads it to **Sanity hosting**. The first run asks you to choose a **hostname** (e.g. `your-name` → `https://your-name.sanity.studio`). Later deploys update the same host. Your `sanity.config.ts` already targets project **`eff153ps`** and dataset **`production`**, so the hosted Studio edits the same dataset you use locally.
+| Layer | Powered by | Why it's here |
+|-------|-----------|---------------|
+| **Authoring** | [Sanity](https://www.sanity.io) v6 — Studio, Portable Text, GROQ | The team writes knowledge in structured documents with rich field types. No code required to teach the agent something new. |
+| **Vector store + search** | [Supabase](https://supabase.com) Postgres + `pgvector` | Stores embeddings and runs cosine-similarity search via the `match_knowledge` SQL function. RLS locked to `service_role` — no anonymous access, ever. |
+| **Ingestion + retrieval** | Supabase **Edge Functions** (Deno) | One function embeds and stores on publish; another embeds and searches on query. Both log for observability. |
+| **Embeddings** | OpenAI `text-embedding-3-small` (1536-dim) | The one place we *don't* use Claude — Anthropic has no embeddings API. Embeddings are OpenAI; all reasoning is Claude. |
+| **Reasoning** | [Anthropic Claude](https://www.anthropic.com) (`claude-sonnet-4-6`) | Receives retrieved context in its system prompt and answers only from it — opinionated, cited, and calibrated to confidence and maturity. |
+| **Web surface** | [Next.js 16](https://nextjs.org) + React 19 on [Vercel](https://vercel.com) | Server-side API route handles retrieval and the Claude call. No sensitive keys ever reach the browser. |
+| **Design system docs** | [Storybook](https://storybook.js.org) v10 + [Chromatic](https://www.chromatic.com) | Living documentation of UI tokens and patterns, with visual regression review in CI. |
+| **Slides export** | [PptxGenJS](https://gitbrent.github.io/PptxGenJS/) | Turn any answer into a branded `.pptx` — Claude restructures the reply into slides, the browser downloads the deck. |
 
-Optional: `npx sanity deploy --schema-required` so deploy fails if the schema cannot be stored. **`sanity.cli.ts`** includes **`deployment.appId`** so deploy is non-interactive.
+---
 
-If the **Next.js site** (or another origin) calls the Sanity API from the browser, add that site URL under **API → CORS origins** for project `eff153ps` in [Sanity Manage](https://www.sanity.io/manage).
+## What makes the architecture interesting
 
-### Storybook & Chromatic (design docs)
+**Retrieval that never breaks.** Context retrieval is a deliberate degradation chain, not a single point of failure:
 
-The **web** app includes **Storybook** for UI/token documentation and a **Chromatic** GitHub Action. See **`web/README.md`** for commands and the `CHROMATIC_PROJECT_TOKEN` secret.
+```
+RAG (semantic search) → GROQ (empty RAG) → GROQ (RAG error) → GROQ (no question)
+```
 
-## Supabase
+The chat **always works** — even with Supabase entirely unconfigured, it falls back to a bounded Sanity GROQ fetch. Every path is labelled so you can see exactly how an answer was sourced.
 
-1. Create a project at [supabase.com/dashboard](https://supabase.com/dashboard).
-2. Copy `.env.example` to `.env.local` and paste **Project URL** and the **anon** key from **Project Settings → API**.
-3. Use `lib/supabase.ts` from Node scripts (load dotenv first) or from a future web app. Prefer the anon client in user-facing code and **RLS on every table** in exposed schemas; reserve `createSupabaseServiceClient` for trusted servers only.
-4. **Supabase MCP:** see the [MCP setup guide](https://supabase.com/docs/guides/getting-started/mcp); authenticate in Cursor so tools can reach your project.
+**Knowledge as a graph, not a list.** Document types (`framework`, `process`, `insight`, `principle`, `externalResource`) share a common contract — confidence, maturity, phases, tags, attribution, and weak `relatedEntries` references that wire entries together. Renaming a phase or tag updates everywhere automatically, because taxonomy is reference-based, not string-based.
 
-Optional: install the [Supabase CLI](https://supabase.com/docs/guides/cli) and run `supabase init` in this repo when you want local migrations and `supabase link`.
+**Interpretation over bookmarks.** The most valuable fields aren't the raw material — they're the takes. An Insight's `myTake`, a Principle's `elaboration` and `tension`. A quote without interpretation is just a bookmark; the interpretation is what makes this a knowledge base.
 
-## Web app (`web/`)
+**Built to add surfaces.** The retrieval layer is shared by design. Today's surface is a web chat; the same pipeline is meant to feed a future Slack bot, a Figma plugin, and CLI/editor integrations. The system prompt can vary per surface — the context format doesn't.
 
-Next.js marketing shell plus **Knowledge chat** (`/chat`): answers with **Anthropic Claude** from retrieved context. By default, context is a bounded **Sanity GROQ** fetch. If **`SUPABASE_URL`** and **`SUPABASE_SERVICE_ROLE_KEY`** are set (Vercel + local `web/.env.local`), the API calls the **`rag-query`** Edge Function first and falls back to GROQ on errors or empty matches.
+---
 
-1. `cd web && cp .env.example .env.local`
-2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `ANTHROPIC_API_KEY`. Optional: `ANTHROPIC_MODEL`, `SANITY_API_READ_TOKEN`, `SUPABASE_*` for RAG, `CHAT_ACCESS_TOKEN` to gate the API.
-3. `npm run dev` from `web/` → [http://localhost:3000](http://localhost:3000)
+## At a glance
 
-Run Studio from repo root (`npm run dev`) on port **3333**; run the site from `web/` on **3000**.
+- **Sanity project** `eff153ps` · **dataset** `production`
+- **Studio** runs from the repo root (`npm run dev`, port 3333) and deploys to Sanity hosting (`npm run deploy`)
+- **Web app** lives in [`web/`](web/) (Next.js, port 3000) and deploys to Vercel
+- **Knowledge types** authored in [`schemaTypes/`](schemaTypes/); shared fields are the single source of truth in [`schemaTypes/objects/sharedFields.ts`](schemaTypes/objects/sharedFields.ts)
+- **Analytics** — GA4 pageviews plus per-question logging to Supabase, with an executive dashboard at `/admin/queries`
+- **Quality bar** — automated WCAG 2.1 AA checks (Playwright + axe) and Chromatic visual review run in CI
 
-**Schema note:** **Source author** is a reusable document; **Attribution** (source author, title, URL) appears on insights and can be filled on frameworks, processes, and principles. **Reference** documents still use the **Author** field linked to the same `sourceAuthor` type.
+## Going deeper
+
+- **[`CLAUDE.md`](CLAUDE.md)** — the authoritative architecture and content-authoring guide. Read this before changing schemas or the pipeline.
+- **[`web/README.md`](web/README.md)** — running the Next.js app, environment variables, Storybook, analytics, and deploy.
+
+> The agent knows nothing that isn't authored in Sanity. There's no hardcoded knowledge in the prompt — everything it says comes from the team's content, retrieved at query time. That's the whole point.

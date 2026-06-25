@@ -232,19 +232,29 @@ export function AdminQueriesDashboard({requiresAccessToken}: AdminQueriesDashboa
               {data.summary.total === 0 ? (
                 <p className="text-muted mt-4 text-sm font-semibold">No questions logged yet.</p>
               ) : (
-                <div className="mt-6 flex h-36 items-end gap-1.5">
-                  {data.activityByDay.map((day) => (
-                    <div key={day.date} className="flex min-w-0 flex-1 flex-col items-center gap-2">
+                <div className="mt-6">
+                  <div className="flex h-36 items-end gap-1.5">
+                    {data.activityByDay.map((day) => (
                       <div
-                        className="bg-brand/70 w-full min-h-[4px] rounded-t-md transition-all"
-                        style={{height: `${Math.max(8, (day.count / maxActivity) * 100)}%`}}
-                        title={`${day.count} question${day.count === 1 ? '' : 's'}`}
+                        key={day.date}
+                        className="bg-brand/70 min-h-[4px] min-w-0 flex-1 rounded-t-md transition-all"
+                        style={{
+                          height: day.count === 0 ? '4px' : `${Math.max(8, (day.count / maxActivity) * 100)}%`,
+                        }}
+                        title={`${formatShortDate(day.date)}: ${day.count} question${day.count === 1 ? '' : 's'}`}
                       />
-                      <span className="text-muted text-[10px] font-bold leading-none">
+                    ))}
+                  </div>
+                  <div className="mt-2 flex gap-1.5">
+                    {data.activityByDay.map((day) => (
+                      <span
+                        key={day.date}
+                        className="text-muted min-w-0 flex-1 text-center text-[10px] font-bold leading-none"
+                      >
                         {formatShortDate(day.date)}
                       </span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </section>

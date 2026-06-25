@@ -8,6 +8,29 @@ export const siteContentDocument = defineType({
   icon: HomeIcon,
   description: 'Editable content for the landing page and chat page.',
   fields: [
+    // ── Global navigation ──
+    defineField({
+      name: 'navBrandLabel',
+      title: 'Nav brand label',
+      type: 'string',
+      description: 'Wordmark text in the top-left of the nav bar (displayed in lowercase).',
+      initialValue: 'design thinking',
+    }),
+    defineField({
+      name: 'navCtaLabel',
+      title: 'Nav CTA label',
+      type: 'string',
+      description: 'Text on the top-right nav button.',
+      initialValue: 'Chat',
+    }),
+    defineField({
+      name: 'navCtaHref',
+      title: 'Nav CTA link',
+      type: 'string',
+      description: 'Where the nav button points. Use a path like "/chat" for internal pages.',
+      initialValue: '/chat',
+    }),
+
     // ── Landing page ──
     defineField({
       name: 'landingEyebrow',

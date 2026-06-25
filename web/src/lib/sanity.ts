@@ -29,6 +29,9 @@ export type FeatureCard = {
 }
 
 export type SiteContent = {
+  navBrandLabel: string
+  navCtaLabel: string
+  navCtaHref: string
   landingEyebrow: string
   landingHeadline: string
   landingDescription: string
@@ -42,6 +45,9 @@ export type SiteContent = {
 }
 
 const SITE_CONTENT_DEFAULTS: SiteContent = {
+  navBrandLabel: 'design thinking',
+  navCtaLabel: 'Chat',
+  navCtaHref: '/chat',
   landingEyebrow: 'Design thinking',
   landingHeadline: "Your team's\ndesign wisdom,\nalways within reach",
   landingDescription:
@@ -66,6 +72,9 @@ const SITE_CONTENT_DEFAULTS: SiteContent = {
 }
 
 const SITE_CONTENT_QUERY = `*[_type == "siteContent" && _id == "siteContent"][0]{
+  navBrandLabel,
+  navCtaLabel,
+  navCtaHref,
   landingEyebrow,
   landingHeadline,
   landingDescription,

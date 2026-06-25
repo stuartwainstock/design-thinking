@@ -2,6 +2,8 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {Geist_Mono, Nunito} from 'next/font/google'
 import {GoogleAnalytics} from '@/components/GoogleAnalytics'
+import {getSiteContent} from '@/lib/sanity'
+import {getSiteUrl} from '@/lib/siteUrl'
 import './globals.css'
 
 const nunito = Nunito({
@@ -16,6 +18,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: 'Design thinking knowledge',
   description: 'Design knowledge base and team chat.',
 }
@@ -23,11 +26,16 @@ export const metadata: Metadata = {
 /** Fallback ISR if the Sanity → /api/revalidate webhook misses; primary refresh is on publish. */
 export const revalidate = 60
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const site = await getSiteContent()
+  const brandLabel = site.navBrandLabel || 'design thinking'
+  const ctaLabel = site.navCtaLabel || 'Chat'
+  const ctaHref = site.navCtaHref || '/chat'
+
   return (
     <html lang="en" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="text-foreground flex min-h-full flex-col">
@@ -57,14 +65,14 @@ export default function RootLayout({
                 </span>
               </span>
               <span className="text-base font-extrabold leading-none tracking-tight">
-                design thinking
+                {brandLabel}
               </span>
             </Link>
             <Link
-              href="/chat"
+              href={ctaHref}
               className="bg-cta hover:bg-cta-hover hover-lift rounded-full px-5 py-2.5 text-sm font-extrabold tracking-wide text-white uppercase shadow-sm transition-colors"
             >
-              Chat
+              {ctaLabel}
             </Link>
           </nav>
         </header>

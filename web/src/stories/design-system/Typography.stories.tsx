@@ -22,7 +22,7 @@ export const Scale: Story = {
         </p>
         <p className="text-brand flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.2em]">
           <span className="bg-sunshine inline-block size-2 rounded-full" aria-hidden />
-          Design thinking
+          fieldnotes
         </p>
       </div>
       <div>

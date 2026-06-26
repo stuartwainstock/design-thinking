@@ -27,7 +27,7 @@ function structure(S: StructureBuilder) {
 
 export default defineConfig({
   name: 'default',
-  title: 'Design Thinking',
+  title: 'fieldnotes',
 
   projectId: 'eff153ps',
   dataset: 'production',

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import {getSiteContent} from '@/lib/sanity'
 
 export const metadata: Metadata = {
-  title: 'Design thinking knowledge — Home',
+  title: 'fieldnotes — your design team’s knowledge, on demand',
   description:
     "Your team's design wisdom — frameworks, processes, principles, and insights curated by your design leaders.",
 }

@@ -66,10 +66,10 @@ export type SiteContent = {
 }
 
 const SITE_CONTENT_DEFAULTS: SiteContent = {
-  navBrandLabel: 'design thinking',
+  navBrandLabel: 'fieldnotes.design',
   navCtaLabel: 'Chat',
   navCtaHref: '/chat',
-  landingEyebrow: 'Design thinking',
+  landingEyebrow: 'fieldnotes',
   landingHeadline: "Your team's\ndesign wisdom,\nalways within reach",
   landingDescription:
     "Frameworks, processes, principles, and insights — curated by your design leaders, ready whenever you need them. Ask a question, get an opinionated answer grounded in what your team actually believes.",
@@ -82,9 +82,9 @@ const SITE_CONTENT_DEFAULTS: SiteContent = {
   aboutEyebrow: 'About',
   aboutHeadline: "Your design team's memory, made conversational.",
   aboutBody:
-    'Every framework, principle, and hard-won lesson your team has earned — captured, structured, and ready to answer. Fieldnotes turns institutional design knowledge into something you can simply ask.',
+    'Every framework, principle, and hard-won lesson your team has earned — captured, structured, and ready to answer. fieldnotes turns institutional design knowledge into something you can simply ask.',
   aboutSubline: "Not a wiki. Not a chatbot. Your team's judgment, on demand.",
-  stackSectionTitle: 'What powers Fieldnotes',
+  stackSectionTitle: 'What powers fieldnotes',
   stackCards: [
     {
       name: 'SANITY',
@@ -109,7 +109,7 @@ const SITE_CONTENT_DEFAULTS: SiteContent = {
   ],
   convictionsSectionTitle: 'Design convictions',
   convictionsIntro:
-    'Every entry in Fieldnotes is calibrated before it earns trust. These are the questions we ask of our own knowledge.',
+    'Every entry in fieldnotes is calibrated before it earns trust. These are the questions we ask of our own knowledge.',
   convictions: [
     {
       label: 'confidence',

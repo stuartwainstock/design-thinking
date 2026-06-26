@@ -1,6 +1,6 @@
-# Design thinking — web
+# fieldnotes — web
 
-Next.js App Router app: **landing** and **knowledge chat** (`/chat`). Copy for marketing and chat chrome is editable in Sanity as **Site content** (singleton). The chat API uses Claude with RAG (optional Supabase) or GROQ fallback — see repo root **`../README.md`** and **`CLAUDE.md`**.
+Next.js App Router app for **fieldnotes** ([fieldnotes.design](https://www.fieldnotes.design)): **landing** (`/`), **about** (`/about`), and **knowledge chat** (`/chat`). The global nav, landing/chat copy, and About page content (mission, tech stack, design convictions) are all editable in Sanity as **Site content** (singleton). The chat API uses Claude with RAG (optional Supabase) or GROQ fallback — see repo root **`../README.md`** and **`CLAUDE.md`**.
 
 ## Environment
 
@@ -8,7 +8,7 @@ Next.js App Router app: **landing** and **knowledge chat** (`/chat`). Copy for m
 cp .env.example .env.local
 ```
 
-Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `REVALIDATE_SECRET` (instant landing/chat copy after Studio publish), `NEXT_PUBLIC_GA_MEASUREMENT_ID` (GA4), `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
+Required for local chat: `NEXT_PUBLIC_SANITY_*`, `ANTHROPIC_API_KEY`. Optional: `SANITY_API_READ_TOKEN`, Supabase keys for RAG, `CHAT_ACCESS_TOKEN`, `ADMIN_ACCESS_TOKEN` (admin dashboard), `REVALIDATE_SECRET` (instant copy refresh after Studio publish), `NEXT_PUBLIC_SITE_URL` (canonical origin for sitemap/robots/OG — e.g. `https://www.fieldnotes.design`), `NEXT_PUBLIC_GA_MEASUREMENT_ID` (GA4), `CHROMATIC_PROJECT_TOKEN` (local Chromatic only).
 
 ## Scripts
 
@@ -52,9 +52,19 @@ Stories live under `src/stories/design-system/`. Token reference: `tokenData.ts`
 
 Local publish: `CHROMATIC_PROJECT_TOKEN=… npm run chromatic` from this directory.
 
+## SEO & discoverability
+
+File-based metadata routes generate `sitemap.xml` and `robots.txt` (Next.js conventions):
+
+- **`src/app/sitemap.ts`** lists the public pages — `/`, `/chat`, `/about`. `/admin/*` and `/api/*` are excluded.
+- **`src/app/robots.ts`** allows crawling, disallows `/admin/` and `/api/`, and points at the sitemap.
+- Both resolve their absolute origin via **`src/lib/getSiteUrl()`**: `NEXT_PUBLIC_SITE_URL` → Vercel's `VERCEL_PROJECT_PRODUCTION_URL` → a hardcoded fallback. `metadataBase` in `layout.tsx` uses the same helper for canonical/OG URLs.
+- Set **`NEXT_PUBLIC_SITE_URL`** in Vercel (Production) to your primary domain — currently `https://www.fieldnotes.design` (the apex `fieldnotes.design` 308-redirects to `www`). Because it's a `NEXT_PUBLIC_` var it's inlined at build time, so changing it requires a redeploy.
+- **Search Console:** verify the property, then submit `https://www.fieldnotes.design/sitemap.xml` (also auto-discovered via `robots.txt`).
+
 ## Site content cache (instant updates)
 
-Landing and chat copy come from the Sanity **Site content** singleton. Pages use ISR (`revalidate = 60`) as a fallback; for instant updates on publish, set `REVALIDATE_SECRET` on Vercel and add a Sanity webhook:
+The global nav (brand + CTA), landing copy, chat chrome, and About page content come from the Sanity **Site content** singleton. Pages use ISR (`revalidate = 60`) as a fallback; for instant updates on publish, set `REVALIDATE_SECRET` on Vercel and add a Sanity webhook:
 
 1. Generate a secret: `openssl rand -hex 32`
 2. Add `REVALIDATE_SECRET` to Vercel (Production + Preview) and `web/.env.local` for local tests
@@ -66,7 +76,7 @@ Landing and chat copy come from the Sanity **Site content** singleton. Pages use
    - **Projection:** `{_id, _type}` (minimal payload is fine)
    - **HTTP method:** POST
 
-After publishing Site content, the next request to `/` or `/chat` should show new copy (no redeploy). Test locally:
+After publishing Site content, the next request to `/`, `/about`, or `/chat` should show new copy (no redeploy). Test locally:
 
 ```bash
 curl -X POST "http://localhost:3000/api/revalidate?secret=YOUR_SECRET" \

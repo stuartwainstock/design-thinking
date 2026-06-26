@@ -29,7 +29,7 @@ export const SiteNav: Story = {
               <span className="bg-pink size-1.5 rounded-full transition-transform group-hover:scale-125" />
             </span>
           </span>
-          <span className="text-base font-extrabold leading-none tracking-tight">design thinking</span>
+          <span className="text-base font-extrabold leading-none tracking-tight">fieldnotes.design</span>
         </Link>
         <Link
           href="/chat"

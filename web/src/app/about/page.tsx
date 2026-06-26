@@ -2,9 +2,9 @@ import type {Metadata} from 'next'
 import {getSiteContent} from '@/lib/sanity'
 
 export const metadata: Metadata = {
-  title: 'About — Design thinking knowledge',
+  title: 'About — fieldnotes',
   description:
-    "The mission behind Fieldnotes, the architecture that powers it, and the design convictions that keep its knowledge honest.",
+    "The mission behind fieldnotes, the architecture that powers it, and the design convictions that keep its knowledge honest.",
 }
 
 const STACK_CARD_COLORS = [

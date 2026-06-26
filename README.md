@@ -1,6 +1,6 @@
-# Design Knowledge Agent
+# fieldnotes
 
-**A second brain for a product design team.** Not a chatbot, not a wiki — a system that turns institutional design leadership knowledge into something self-service, so that quality standards are *implicit* in the answers rather than something a designer has to go hunting for.
+**A second brain for a product design team** — live at [fieldnotes.design](https://www.fieldnotes.design). Not a chatbot, not a wiki — a system that turns institutional design leadership knowledge into something self-service, so that quality standards are *implicit* in the answers rather than something a designer has to go hunting for.
 
 A designer asks a question. The agent answers with the team's own judgment, frameworks, and principles — cited, opinionated, and calibrated to the asker's experience level.
 
@@ -68,9 +68,10 @@ The chat **always works** — even with Supabase entirely unconfigured, it falls
 
 - **Sanity project** `eff153ps` · **dataset** `production`
 - **Studio** runs from the repo root (`npm run dev`, port 3333) and deploys to Sanity hosting (`npm run deploy`)
-- **Web app** lives in [`web/`](web/) (Next.js, port 3000) and deploys to Vercel
-- **Knowledge types** authored in [`schemaTypes/`](schemaTypes/); shared fields are the single source of truth in [`schemaTypes/objects/sharedFields.ts`](schemaTypes/objects/sharedFields.ts)
+- **Web app** lives in [`web/`](web/) (Next.js, port 3000) and deploys to Vercel at [www.fieldnotes.design](https://www.fieldnotes.design) — public pages: `/`, `/about`, `/chat`
+- **Knowledge types** authored in [`schemaTypes/`](schemaTypes/); shared fields are the single source of truth in [`schemaTypes/objects/sharedFields.ts`](schemaTypes/objects/sharedFields.ts). Marketing copy, the nav, and the About page are editable via the `siteContent` singleton
 - **Analytics** — GA4 pageviews plus per-question logging to Supabase, with an executive dashboard at `/admin/queries`
+- **Discoverability** — generated `sitemap.xml` and `robots.txt`, with canonical/OG URLs driven by `NEXT_PUBLIC_SITE_URL`
 - **Quality bar** — automated WCAG 2.1 AA checks (Playwright + axe) and Chromatic visual review run in CI
 
 ## Going deeper

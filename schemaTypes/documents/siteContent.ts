@@ -14,7 +14,7 @@ export const siteContentDocument = defineType({
       title: 'Nav brand label',
       type: 'string',
       description: 'Wordmark text in the top-left of the nav bar (displayed in lowercase).',
-      initialValue: 'design thinking',
+      initialValue: 'fieldnotes.design',
     }),
     defineField({
       name: 'navCtaLabel',
@@ -36,8 +36,8 @@ export const siteContentDocument = defineType({
       name: 'landingEyebrow',
       title: 'Landing eyebrow',
       type: 'string',
-      description: 'Small uppercase label above the headline (e.g. "Design thinking").',
-      initialValue: 'Design thinking',
+      description: 'Small uppercase label above the headline (e.g. "fieldnotes").',
+      initialValue: 'fieldnotes',
     }),
     defineField({
       name: 'landingHeadline',
@@ -111,7 +111,7 @@ export const siteContentDocument = defineType({
       rows: 4,
       description: 'Supporting paragraph beneath the mission headline. Line breaks are preserved.',
       initialValue:
-        'Every framework, principle, and hard-won lesson your team has earned — captured, structured, and ready to answer. Fieldnotes turns institutional design knowledge into something you can simply ask.',
+        'Every framework, principle, and hard-won lesson your team has earned — captured, structured, and ready to answer. fieldnotes turns institutional design knowledge into something you can simply ask.',
     }),
     defineField({
       name: 'aboutSubline',
@@ -127,13 +127,13 @@ export const siteContentDocument = defineType({
       title: 'Tech stack section title',
       type: 'string',
       description: 'Heading for the tech stack section.',
-      initialValue: 'What powers Fieldnotes',
+      initialValue: 'What powers fieldnotes',
     }),
     defineField({
       name: 'stackCards',
       title: 'Tech stack cards',
       type: 'array',
-      description: 'The tools behind Fieldnotes, presented as cards.',
+      description: 'The tools behind fieldnotes, presented as cards.',
       of: [
         defineArrayMember({
           type: 'object',
@@ -201,7 +201,7 @@ export const siteContentDocument = defineType({
       rows: 2,
       description: 'One or two sentence intro for the convictions section.',
       initialValue:
-        'Every entry in Fieldnotes is calibrated before it earns trust. These are the questions we ask of our own knowledge.',
+        'Every entry in fieldnotes is calibrated before it earns trust. These are the questions we ask of our own knowledge.',
     }),
     defineField({
       name: 'convictions',

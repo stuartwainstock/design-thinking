@@ -3,7 +3,7 @@ import {ChatPanel} from '@/components/ChatPanel'
 import {getSiteContent} from '@/lib/sanity'
 
 export const metadata: Metadata = {
-  title: 'Design thinking knowledge — Chat',
+  title: 'Chat — fieldnotes',
   description:
     'Ask questions and get opinionated answers grounded in your published design knowledge base.',
 }

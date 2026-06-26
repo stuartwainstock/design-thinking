@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: 'Design thinking knowledge',
-  description: 'Design knowledge base and team chat.',
+  title: 'fieldnotes — your design team’s knowledge, on demand',
+  description: 'fieldnotes — your design team’s knowledge base and chat.',
 }
 
 /** Fallback ISR if the Sanity → /api/revalidate webhook misses; primary refresh is on publish. */
@@ -32,7 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const site = await getSiteContent()
-  const brandLabel = site.navBrandLabel || 'design thinking'
+  const brandLabel = site.navBrandLabel || 'fieldnotes.design'
   const ctaLabel = site.navCtaLabel || 'Chat'
   const ctaHref = site.navCtaHref || '/chat'
 

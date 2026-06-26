@@ -96,7 +96,7 @@ export default async function RootLayout({
             <nav aria-label="Footer">
               <Link
                 href="/about"
-                className="text-foreground hover:text-brand text-sm font-extrabold transition-colors"
+                className="text-brand hover:text-brand-muted text-xs font-bold transition-colors"
               >
                 About
               </Link>

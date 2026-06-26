@@ -14,14 +14,6 @@ const CARD_COLORS = [
   'bg-pink/10 border-pink/25',
 ]
 
-const STACK_CARD_COLORS = [
-  'bg-brand-light border-brand/20',
-  'bg-sunshine/20 border-sunshine/40',
-  'bg-pink/10 border-pink/25',
-  'bg-green/10 border-green/30',
-  'bg-purple/10 border-purple/30',
-]
-
 export default async function Home() {
   const site = await getSiteContent()
 
@@ -104,104 +96,6 @@ export default async function Home() {
             {site.landingCta}
           </Link>
         </div>
-
-        {/* ── About / Mission ── */}
-        {(site.aboutHeadline || site.aboutBody) && (
-          <div className="relative">
-            {site.aboutEyebrow && (
-              <p className="text-brand flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.2em]">
-                <span className="bg-pink inline-block size-2 rounded-full" aria-hidden />
-                {site.aboutEyebrow}
-              </p>
-            )}
-            {site.aboutHeadline && (
-              <h2 className="text-foreground mt-4 text-3xl font-extrabold tracking-tight md:text-4xl md:leading-[1.12]">
-                {site.aboutHeadline}
-              </h2>
-            )}
-            {site.aboutBody && (
-              <p className="text-muted mt-5 max-w-xl whitespace-pre-line text-lg font-semibold leading-relaxed">
-                {site.aboutBody}
-              </p>
-            )}
-            {site.aboutSubline && (
-              <p className="text-brand mt-4 text-base font-extrabold">{site.aboutSubline}</p>
-            )}
-          </div>
-        )}
-
-        {/* ── Tech stack ── */}
-        {site.stackCards.length > 0 && (
-          <div className="relative">
-            {site.stackSectionTitle && (
-              <h2 className="text-foreground text-3xl font-extrabold tracking-tight md:text-4xl">
-                {site.stackSectionTitle}
-              </h2>
-            )}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {site.stackCards.map((card, i) => (
-                <div
-                  key={`${card.name}-${i}`}
-                  className={`hover-lift rounded-2xl border-2 ${STACK_CARD_COLORS[i % STACK_CARD_COLORS.length]} px-5 py-5`}
-                >
-                  <p className="text-brand text-xs font-extrabold uppercase tracking-[0.2em]">
-                    {card.name}
-                  </p>
-                  {card.descriptor && (
-                    <p className="text-foreground mt-2 text-base font-extrabold">{card.descriptor}</p>
-                  )}
-                  {card.role && (
-                    <p className="text-foreground/75 mt-1 text-sm font-semibold leading-relaxed">
-                      {card.role}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── Design convictions ── */}
-        {site.convictions.length > 0 && (
-          <div className="relative">
-            {site.convictionsSectionTitle && (
-              <h2 className="text-foreground text-3xl font-extrabold tracking-tight md:text-4xl">
-                {site.convictionsSectionTitle}
-              </h2>
-            )}
-            {site.convictionsIntro && (
-              <p className="text-muted mt-4 max-w-xl whitespace-pre-line text-lg font-semibold leading-relaxed">
-                {site.convictionsIntro}
-              </p>
-            )}
-            <ul className="mt-6 space-y-3">
-              {site.convictions.map((conviction, i) => (
-                <li
-                  key={`${conviction.label}-${i}`}
-                  className="border-border-playful bg-surface rounded-2xl border-2 px-5 py-4"
-                >
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    {conviction.label && (
-                      <span className="text-brand font-mono text-sm font-bold">
-                        {conviction.label}
-                      </span>
-                    )}
-                    {conviction.question && (
-                      <span className="text-foreground text-base font-extrabold">
-                        {conviction.question}
-                      </span>
-                    )}
-                  </div>
-                  {conviction.description && (
-                    <p className="text-muted mt-1.5 text-sm font-semibold leading-relaxed">
-                      {conviction.description}
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         {/* ── Feature cards ── */}
         {site.featureCards.length > 0 && (

@@ -89,6 +89,177 @@ export const siteContentDocument = defineType({
       ],
     }),
 
+    // ── About / Mission ──
+    defineField({
+      name: 'aboutEyebrow',
+      title: 'About eyebrow',
+      type: 'string',
+      description: 'Short uppercase label above the mission headline.',
+      initialValue: 'About',
+    }),
+    defineField({
+      name: 'aboutHeadline',
+      title: 'About headline',
+      type: 'string',
+      description: 'The primary mission statement.',
+      initialValue: "Your design team's memory, made conversational.",
+    }),
+    defineField({
+      name: 'aboutBody',
+      title: 'About body',
+      type: 'text',
+      rows: 4,
+      description: 'Supporting paragraph beneath the mission headline. Line breaks are preserved.',
+      initialValue:
+        'Every framework, principle, and hard-won lesson your team has earned — captured, structured, and ready to answer. Fieldnotes turns institutional design knowledge into something you can simply ask.',
+    }),
+    defineField({
+      name: 'aboutSubline',
+      title: 'About subline',
+      type: 'string',
+      description: 'Optional secondary statement beneath the body.',
+      initialValue: "Not a wiki. Not a chatbot. Your team's judgment, on demand.",
+    }),
+
+    // ── Tech stack ──
+    defineField({
+      name: 'stackSectionTitle',
+      title: 'Tech stack section title',
+      type: 'string',
+      description: 'Heading for the tech stack section.',
+      initialValue: 'What powers Fieldnotes',
+    }),
+    defineField({
+      name: 'stackCards',
+      title: 'Tech stack cards',
+      type: 'array',
+      description: 'The tools behind Fieldnotes, presented as cards.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'name',
+              title: 'Name',
+              type: 'string',
+              description: 'Tool name in all caps (e.g. SANITY).',
+            }),
+            defineField({
+              name: 'descriptor',
+              title: 'Descriptor',
+              type: 'string',
+              description: 'What it does (e.g. "Structured authoring environment").',
+            }),
+            defineField({
+              name: 'role',
+              title: 'Role',
+              type: 'string',
+              description: 'Why it is here (e.g. "Where knowledge is written, structured, and published").',
+            }),
+          ],
+          preview: {
+            select: {title: 'name', subtitle: 'descriptor'},
+          },
+        }),
+      ],
+      initialValue: [
+        {
+          name: 'SANITY',
+          descriptor: 'Structured authoring environment',
+          role: 'Where knowledge is written, structured, and published',
+        },
+        {
+          name: 'SUPABASE',
+          descriptor: 'Vector search with pgvector',
+          role: 'Surfaces the most relevant knowledge for every question',
+        },
+        {
+          name: 'CLAUDE',
+          descriptor: "Anthropic's reasoning model",
+          role: 'Turns retrieved knowledge into opinionated, grounded answers',
+        },
+        {
+          name: 'NEXT.JS',
+          descriptor: 'React framework on Vercel',
+          role: 'Delivers the experience — fast, accessible, everywhere',
+        },
+      ],
+    }),
+
+    // ── Design convictions ──
+    defineField({
+      name: 'convictionsSectionTitle',
+      title: 'Design convictions section title',
+      type: 'string',
+      description: 'Heading for the design convictions section.',
+      initialValue: 'Design convictions',
+    }),
+    defineField({
+      name: 'convictionsIntro',
+      title: 'Design convictions intro',
+      type: 'text',
+      rows: 2,
+      description: 'One or two sentence intro for the convictions section.',
+      initialValue:
+        'Every entry in Fieldnotes is calibrated before it earns trust. These are the questions we ask of our own knowledge.',
+    }),
+    defineField({
+      name: 'convictions',
+      title: 'Design convictions',
+      type: 'array',
+      description: 'The calibration fields that keep the knowledge base honest.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              description: 'The field name (e.g. "confidence").',
+            }),
+            defineField({
+              name: 'question',
+              title: 'Question',
+              type: 'string',
+              description: 'The calibration question (e.g. "Evergreen or experimental?").',
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'string',
+              description: 'One sentence elaboration.',
+            }),
+          ],
+          preview: {
+            select: {title: 'label', subtitle: 'question'},
+          },
+        }),
+      ],
+      initialValue: [
+        {
+          label: 'confidence',
+          question: 'Evergreen or experimental?',
+          description: 'How settled an idea is — state it with conviction, or flag it as still forming.',
+        },
+        {
+          label: 'maturity',
+          question: 'Onboarding or senior?',
+          description: 'Who the answer is for — calibrate the depth to the reader’s experience.',
+        },
+        {
+          label: 'myTake',
+          question: 'Bookmark or belief?',
+          description: 'A quote without interpretation is just a link; the take is what makes it knowledge.',
+        },
+        {
+          label: 'tension',
+          question: 'Where does this break?',
+          description: 'A principle without edges is a platitude — the good ones occasionally conflict.',
+        },
+      ],
+    }),
+
     // ── Chat page ──
     defineField({
       name: 'chatEyebrow',

@@ -69,6 +69,12 @@ export default async function RootLayout({
               </span>
             </Link>
             <Link
+              href="/about"
+              className="text-foreground hover:text-brand font-semibold transition-colors"
+            >
+              About
+            </Link>
+            <Link
               href={ctaHref}
               className="bg-cta hover:bg-cta-hover hover-lift rounded-full px-5 py-2.5 text-sm font-extrabold tracking-wide text-white uppercase shadow-sm transition-colors"
             >

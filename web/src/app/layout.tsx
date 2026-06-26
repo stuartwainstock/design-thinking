@@ -69,12 +69,6 @@ export default async function RootLayout({
               </span>
             </Link>
             <Link
-              href="/about"
-              className="text-foreground hover:text-brand font-semibold transition-colors"
-            >
-              About
-            </Link>
-            <Link
               href={ctaHref}
               className="bg-cta hover:bg-cta-hover hover-lift rounded-full px-5 py-2.5 text-sm font-extrabold tracking-wide text-white uppercase shadow-sm transition-colors"
             >
@@ -99,6 +93,14 @@ export default async function RootLayout({
               <span className="bg-green size-2.5 rounded-full" />
               <span className="bg-purple size-2.5 rounded-full" />
             </div>
+            <nav aria-label="Footer">
+              <Link
+                href="/about"
+                className="text-foreground hover:text-brand text-sm font-extrabold transition-colors"
+              >
+                About
+              </Link>
+            </nav>
             <p className="text-muted text-center text-xs font-semibold leading-relaxed">
               Built with care on{' '}
               <a

@@ -34,6 +34,12 @@
     "prettier": "^3.5",
     "typescript": "^5.8"
   },
+  "overrides": {
+    "@module-federation/dts-plugin": {
+      "undici": "^7.28.0",
+      "ws": "^8.21.0"
+    }
+  },
   "prettier": {
     "bracketSpacing": false,
     "printWidth": 100,

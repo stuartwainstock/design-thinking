@@ -15,6 +15,8 @@ concurrency:
 jobs:
   chromatic:
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,9 +35,12 @@ jobs:
         run: npm ci
 
       - name: Publish to Chromatic
+        # Skip when the token is unavailable (e.g. Dependabot PRs, which can't
+        # read repo secrets). Keeps the check green instead of failing falsely.
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
         uses: chromaui/action@v13
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          projectToken: ${{ env.CHROMATIC_PROJECT_TOKEN }}
           workingDir: web
           buildScriptName: build-storybook
           # Allow PR checks to pass; review visual diffs in the Chromatic UI

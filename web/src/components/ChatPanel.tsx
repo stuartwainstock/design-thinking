@@ -29,7 +29,7 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [exportingIdx, setExportingIdx] = useState<number | null>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const questionRef = useRef<HTMLDivElement>(null)
 
   const effectiveToken = useMemo(() => {
     if (typeof window === 'undefined') return ''
@@ -53,13 +53,30 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
     setToken('')
   }, [token])
 
-  /* Auto-scroll to newest message */
+  /* Index of the most recent user message, used as the scroll anchor */
+  const lastUserIndex = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') return i
+    }
+    return -1
+  }, [messages])
+
+  /*
+   * When the user sends a question, pin it near the top of the viewport and let
+   * the answer render below it — readers start at the beginning and scroll at
+   * their own pace. We deliberately do NOT scroll when the assistant reply
+   * arrives, so the view stays put instead of jumping to the end.
+   */
   useEffect(() => {
+    if (messages[messages.length - 1]?.role !== 'user') return
     const reduceMotion =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    bottomRef.current?.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'})
-  }, [messages, loading])
+    questionRef.current?.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }, [messages])
 
   const send = useCallback(
     async (overrideText?: string) => {
@@ -257,7 +274,11 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
 
         {/* Message bubbles */}
         {messages.map((m, i) => (
-          <div key={`${m.role}-${i}`}>
+          <div
+            key={`${m.role}-${i}`}
+            ref={i === lastUserIndex ? questionRef : undefined}
+            className="scroll-mt-24"
+          >
             <div
               className={
                 m.role === 'user'
@@ -327,8 +348,6 @@ export function ChatPanel({requiresAccessToken, emptyMessage, starters}: ChatPan
             </div>
           </div>
         ) : null}
-
-        <div ref={bottomRef} />
       </div>
 
       {/* Input area */}

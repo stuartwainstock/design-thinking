@@ -80,7 +80,7 @@ export default async function Home() {
         <div className="relative flex flex-wrap gap-3">
           <Link
             href="/chat"
-            className="bg-cta hover:bg-cta-hover hover-lift inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-extrabold tracking-wide text-white uppercase shadow-lg transition-all"
+            className="bg-cta hover:bg-cta-hover hover-lift inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-extrabold tracking-wide text-white shadow-lg transition-all"
           >
             <svg
               className="size-4"

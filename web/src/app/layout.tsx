@@ -2,8 +2,10 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {Geist_Mono, Nunito} from 'next/font/google'
 import {GoogleAnalytics} from '@/components/GoogleAnalytics'
+import {JsonLd} from '@/components/JsonLd'
 import {getSiteContent} from '@/lib/sanity'
 import {getSiteUrl} from '@/lib/siteUrl'
+import {graph, organizationSchema, websiteSchema} from '@/lib/structuredData'
 import './globals.css'
 
 const nunito = Nunito({
@@ -17,10 +19,29 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: 'fieldnotes — your design team’s knowledge, on demand',
-  description: 'fieldnotes — your design team’s knowledge base and chat.',
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+  const siteName = site.seo.siteName || 'fieldnotes'
+  const handle = site.seo.twitterHandle || undefined
+  return {
+    metadataBase: new URL(getSiteUrl()),
+    title: {
+      default: site.seo.landingMetaTitle,
+      template: `%s — ${siteName}`,
+    },
+    description: site.seo.landingMetaDescription,
+    openGraph: {
+      type: 'website',
+      siteName,
+      locale: 'en_US',
+      url: getSiteUrl(),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: handle,
+      creator: handle,
+    },
+  }
 }
 
 /** Fallback ISR if the Sanity → /api/revalidate webhook misses; primary refresh is on publish. */
@@ -35,10 +56,13 @@ export default async function RootLayout({
   const brandLabel = site.navBrandLabel || 'fieldnotes.design'
   const ctaLabel = site.navCtaLabel || 'Chat'
   const ctaHref = site.navCtaHref || '/chat'
+  const siteUrl = getSiteUrl()
+  const siteSchema = graph(organizationSchema(site, siteUrl), websiteSchema(site, siteUrl))
 
   return (
     <html lang="en" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="text-foreground flex min-h-full flex-col">
+        <JsonLd data={siteSchema} />
         <GoogleAnalytics />
         <a href="#main-content" className="skip-link sr-only">
           Skip to main content

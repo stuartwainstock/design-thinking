@@ -305,6 +305,135 @@ export const siteContentDocument = defineType({
         'What principles guide critique?',
       ],
     }),
+
+    // ── SEO & social sharing ──
+    defineField({
+      name: 'seo',
+      title: 'SEO & social sharing',
+      type: 'object',
+      description:
+        'Search-engine titles/descriptions and social preview settings. Leave a field blank to fall back to a sensible default.',
+      options: {collapsible: true, collapsed: true},
+      fields: [
+        defineField({
+          name: 'siteName',
+          title: 'Site name',
+          type: 'string',
+          description: 'Brand name used in social cards and structured data.',
+          initialValue: 'fieldnotes',
+        }),
+        defineField({
+          name: 'tagline',
+          title: 'Tagline',
+          type: 'string',
+          description: 'Short phrase shown on the auto-generated social share image.',
+          initialValue: "your design team's knowledge, on demand",
+        }),
+        defineField({
+          name: 'landingMetaTitle',
+          title: 'Home — page title',
+          type: 'string',
+          description: 'Browser tab + search result title for the home page. ~50–60 characters.',
+          validation: (Rule) => Rule.max(70).warning('Aim for under 60 characters.'),
+        }),
+        defineField({
+          name: 'landingMetaDescription',
+          title: 'Home — meta description',
+          type: 'text',
+          rows: 2,
+          description: 'Search result snippet for the home page. ~150–160 characters.',
+          validation: (Rule) => Rule.max(180).warning('Aim for under 160 characters.'),
+        }),
+        defineField({
+          name: 'aboutMetaTitle',
+          title: 'About — page title',
+          type: 'string',
+          validation: (Rule) => Rule.max(70).warning('Aim for under 60 characters.'),
+        }),
+        defineField({
+          name: 'aboutMetaDescription',
+          title: 'About — meta description',
+          type: 'text',
+          rows: 2,
+          validation: (Rule) => Rule.max(180).warning('Aim for under 160 characters.'),
+        }),
+        defineField({
+          name: 'chatMetaTitle',
+          title: 'Chat — page title',
+          type: 'string',
+          validation: (Rule) => Rule.max(70).warning('Aim for under 60 characters.'),
+        }),
+        defineField({
+          name: 'chatMetaDescription',
+          title: 'Chat — meta description',
+          type: 'text',
+          rows: 2,
+          validation: (Rule) => Rule.max(180).warning('Aim for under 160 characters.'),
+        }),
+        defineField({
+          name: 'ogImage',
+          title: 'Social share image',
+          type: 'image',
+          description:
+            'Optional. ~1200×630px. When set, this overrides the auto-generated branded image.',
+        }),
+        defineField({
+          name: 'twitterHandle',
+          title: 'X / Twitter handle',
+          type: 'string',
+          description: 'Including the @, e.g. "@fieldnotes". Used on Twitter/X cards.',
+        }),
+        defineField({
+          name: 'sameAs',
+          title: 'Social & profile links',
+          type: 'array',
+          of: [defineArrayMember({type: 'url'})],
+          description:
+            'Links to your official profiles (X, LinkedIn, GitHub…). Used for Organization structured data.',
+        }),
+      ],
+    }),
+
+    // ── FAQ (answer-engine optimization) ──
+    defineField({
+      name: 'faqSectionTitle',
+      title: 'FAQ section title',
+      type: 'string',
+      description: 'Heading for the FAQ section on the About page.',
+      initialValue: 'Frequently asked questions',
+    }),
+    defineField({
+      name: 'faq',
+      title: 'FAQ',
+      type: 'array',
+      description:
+        'Question-and-answer pairs shown on the About page and emitted as FAQ structured data for search and AI answer engines.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'question',
+              title: 'Question',
+              type: 'string',
+              description: 'Phrase as a real question a user would ask.',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'answer',
+              title: 'Answer',
+              type: 'text',
+              rows: 3,
+              description: 'A direct, self-contained answer. Lead with the answer, then elaborate.',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {title: 'question', subtitle: 'answer'},
+          },
+        }),
+      ],
+    }),
   ],
 
   // Singleton: only one document of this type should exist

@@ -2,10 +2,15 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {getSiteContent} from '@/lib/sanity'
 
-export const metadata: Metadata = {
-  title: 'fieldnotes — your design team’s knowledge, on demand',
-  description:
-    "Your team's design wisdom — frameworks, processes, principles, and insights curated by your design leaders.",
+export async function generateMetadata(): Promise<Metadata> {
+  const {seo} = await getSiteContent()
+  return {
+    title: {absolute: seo.landingMetaTitle},
+    description: seo.landingMetaDescription,
+    alternates: {canonical: '/'},
+    openGraph: {title: seo.landingMetaTitle, description: seo.landingMetaDescription, url: '/'},
+    twitter: {title: seo.landingMetaTitle, description: seo.landingMetaDescription},
+  }
 }
 
 const CARD_COLORS = [

@@ -2,10 +2,15 @@ import type {Metadata} from 'next'
 import {ChatPanel} from '@/components/ChatPanel'
 import {getSiteContent} from '@/lib/sanity'
 
-export const metadata: Metadata = {
-  title: 'Chat — fieldnotes',
-  description:
-    'Ask questions and get opinionated answers grounded in your published design knowledge base.',
+export async function generateMetadata(): Promise<Metadata> {
+  const {seo} = await getSiteContent()
+  return {
+    title: {absolute: seo.chatMetaTitle},
+    description: seo.chatMetaDescription,
+    alternates: {canonical: '/chat'},
+    openGraph: {title: seo.chatMetaTitle, description: seo.chatMetaDescription, url: '/chat'},
+    twitter: {title: seo.chatMetaTitle, description: seo.chatMetaDescription},
+  }
 }
 
 export default async function ChatPage() {

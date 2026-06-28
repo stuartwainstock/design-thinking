@@ -40,6 +40,31 @@ export type Conviction = {
   description: string
 }
 
+export type SeoImage = {
+  url: string
+  width: number | null
+  height: number | null
+}
+
+export type SiteSeo = {
+  siteName: string
+  tagline: string
+  landingMetaTitle: string
+  landingMetaDescription: string
+  aboutMetaTitle: string
+  aboutMetaDescription: string
+  chatMetaTitle: string
+  chatMetaDescription: string
+  ogImage: SeoImage | null
+  twitterHandle: string
+  sameAs: string[]
+}
+
+export type FaqItem = {
+  question: string
+  answer: string
+}
+
 export type SiteContent = {
   navBrandLabel: string
   navCtaLabel: string
@@ -63,6 +88,9 @@ export type SiteContent = {
   chatDescription: string
   chatEmptyMessage: string
   chatStarters: string[]
+  seo: SiteSeo
+  faqSectionTitle: string
+  faq: FaqItem[]
 }
 
 const SITE_CONTENT_DEFAULTS: SiteContent = {
@@ -143,6 +171,45 @@ const SITE_CONTENT_DEFAULTS: SiteContent = {
     'Walk me through our discovery process',
     'What principles guide critique?',
   ],
+  seo: {
+    siteName: 'fieldnotes',
+    tagline: "your design team's knowledge, on demand",
+    landingMetaTitle: 'fieldnotes — your design team’s knowledge, on demand',
+    landingMetaDescription:
+      "Your team's design wisdom — frameworks, processes, principles, and insights curated by your design leaders, answerable in plain language.",
+    aboutMetaTitle: 'About — fieldnotes',
+    aboutMetaDescription:
+      'The mission behind fieldnotes, the architecture that powers it, and the design convictions that keep its knowledge honest.',
+    chatMetaTitle: 'Chat — fieldnotes',
+    chatMetaDescription:
+      'Ask questions and get opinionated answers grounded in your published design knowledge base.',
+    ogImage: null,
+    twitterHandle: '',
+    sameAs: [],
+  },
+  faqSectionTitle: 'Frequently asked questions',
+  faq: [
+    {
+      question: 'What is fieldnotes?',
+      answer:
+        "fieldnotes is a second brain for a product design team — a searchable, conversational knowledge base of the frameworks, processes, principles, and insights your design leaders actually use. You ask a question and get an opinionated answer grounded in your team's own judgment, with citations.",
+    },
+    {
+      question: 'How is it different from a wiki or a chatbot?',
+      answer:
+        "A wiki makes you hunt for the right page; a generic chatbot invents plausible-sounding answers. fieldnotes only answers from your team's published knowledge, cites the source, and is calibrated to the asker's experience level — so quality standards are built in rather than left to chance.",
+    },
+    {
+      question: 'How does fieldnotes work?',
+      answer:
+        'Knowledge is authored in a structured CMS, embedded into a vector database, and retrieved by semantic search at question time. A reasoning model turns the most relevant entries into a grounded, opinionated answer — never freelancing beyond what your team has written.',
+    },
+    {
+      question: 'Where do the answers come from?',
+      answer:
+        'Every answer is drawn from your published frameworks, processes, principles, and insights. If the knowledge base does not cover something, fieldnotes says so and suggests what kind of entry would help — rather than guessing.',
+    },
+  ],
 }
 
 const SITE_CONTENT_QUERY = `*[_type == "siteContent" && _id == "siteContent"][0]{
@@ -168,6 +235,25 @@ const SITE_CONTENT_QUERY = `*[_type == "siteContent" && _id == "siteContent"][0]
   chatDescription,
   chatEmptyMessage,
   chatStarters,
+  seo{
+    siteName,
+    tagline,
+    landingMetaTitle,
+    landingMetaDescription,
+    aboutMetaTitle,
+    aboutMetaDescription,
+    chatMetaTitle,
+    chatMetaDescription,
+    twitterHandle,
+    sameAs,
+    "ogImage": ogImage{
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height
+    }
+  },
+  faqSectionTitle,
+  faq[]{ question, answer },
 }`
 
 export async function getSiteContent(): Promise<SiteContent> {
@@ -227,6 +313,38 @@ export async function getSiteContent(): Promise<SiteContent> {
       merged.chatStarters = data.chatStarters.filter(
         (s) => typeof s === 'string' && s.trim().length > 0,
       )
+    }
+
+    // SEO is a nested object; merge field-by-field so a partial Studio entry
+    // doesn't blow away the code defaults for fields left blank.
+    if (data.seo && typeof data.seo === 'object') {
+      const seo = data.seo as Partial<SiteSeo>
+      merged.seo = {...SITE_CONTENT_DEFAULTS.seo, ...stripNulls(seo)}
+      merged.seo.sameAs = Array.isArray(seo.sameAs)
+        ? seo.sameAs.filter((s): s is string => typeof s === 'string' && s.trim().length > 0)
+        : []
+      const img = seo.ogImage
+      merged.seo.ogImage =
+        img && typeof img.url === 'string' && img.url.length > 0
+          ? {
+              url: img.url,
+              width: typeof img.width === 'number' ? img.width : null,
+              height: typeof img.height === 'number' ? img.height : null,
+            }
+          : null
+    }
+
+    if (Array.isArray(data.faq)) {
+      merged.faq = data.faq
+        .filter(
+          (f): f is FaqItem =>
+            f != null &&
+            typeof f.question === 'string' &&
+            f.question.trim().length > 0 &&
+            typeof f.answer === 'string' &&
+            f.answer.trim().length > 0,
+        )
+        .map((f) => ({question: f.question.trim(), answer: f.answer.trim()}))
     }
 
     return merged

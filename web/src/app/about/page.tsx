@@ -1,10 +1,17 @@
 import type {Metadata} from 'next'
 import {getSiteContent} from '@/lib/sanity'
+import {JsonLd} from '@/components/JsonLd'
+import {faqSchema, graph} from '@/lib/structuredData'
 
-export const metadata: Metadata = {
-  title: 'About — fieldnotes',
-  description:
-    "The mission behind fieldnotes, the architecture that powers it, and the design convictions that keep its knowledge honest.",
+export async function generateMetadata(): Promise<Metadata> {
+  const {seo} = await getSiteContent()
+  return {
+    title: {absolute: seo.aboutMetaTitle},
+    description: seo.aboutMetaDescription,
+    alternates: {canonical: '/about'},
+    openGraph: {title: seo.aboutMetaTitle, description: seo.aboutMetaDescription, url: '/about'},
+    twitter: {title: seo.aboutMetaTitle, description: seo.aboutMetaDescription},
+  }
 }
 
 const STACK_CARD_COLORS = [
@@ -20,6 +27,7 @@ export default async function About() {
 
   return (
     <section className="relative flex flex-1 flex-col overflow-x-clip">
+      {site.faq.length > 0 && <JsonLd data={graph(faqSchema(site.faq))} />}
       {/* ── Full-bleed background glows ── */}
       <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
         <div className="bg-sunshine/20 absolute -top-10 right-[6%] size-64 rounded-full blur-3xl md:size-96" />
@@ -108,6 +116,32 @@ export default async function About() {
                       {conviction.description}
                     </p>
                   )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── FAQ ── */}
+        {site.faq.length > 0 && (
+          <div className="relative">
+            {site.faqSectionTitle && (
+              <h2 className="text-foreground text-3xl font-extrabold tracking-tight md:text-4xl">
+                {site.faqSectionTitle}
+              </h2>
+            )}
+            <div className="mt-6 flex flex-col gap-4">
+              {site.faq.map((item, i) => (
+                <div
+                  key={`${item.question}-${i}`}
+                  className="border-border-playful bg-surface rounded-2xl border-2 px-6 py-5"
+                >
+                  <h3 className="text-foreground text-lg font-extrabold tracking-tight">
+                    {item.question}
+                  </h3>
+                  <p className="text-muted mt-2 whitespace-pre-line text-base font-semibold leading-relaxed">
+                    {item.answer}
+                  </p>
                 </div>
               ))}
             </div>
